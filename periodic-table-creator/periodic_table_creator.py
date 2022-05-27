@@ -193,6 +193,7 @@ with try_expander('Find Gaps'):
         df = df[df['gapscore'] >= gaps]
 
 
+
 # plot config options in sidebar
 with try_expander('Fill Vacancy'):
     vacancy = st.selectbox(
