@@ -70,7 +70,7 @@ with try_expander('Load Content', False):
         df = pd.read_csv(data, sep=',', header=0, encoding='utf-8', keep_default_na=False)
 
 
-    df = pd.read_csv("mapdataformatted.csv", header=0, encoding='utf-8')
+    df = pd.read_csv("https://github.com/mia-ktlk/teammap/blob/main/periodic-table-creator/mapdataformatted.csv", header=0, encoding='utf-8')
     df = df.astype({'tmrolelevel': 'str'})
 
     if st.checkbox('Show CSV data', value=False):
