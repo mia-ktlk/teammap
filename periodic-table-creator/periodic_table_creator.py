@@ -153,6 +153,45 @@ df["period"] = [periods[x-1] for x in df.period]
 groups = [str(x) for x in df_group.group]
 groupnames = [str(x) for x in df_group.groupname]
 
+with try_expander('Filter'):
+    skills = st.multiselect(
+     'Skills',
+     [1, 2, 3, 4, 5, 6, 7, 8],
+     [])
+    sme = st.multiselect(
+    'SME',
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [])
+    outcomes = st.slider('Positive outcome percentage >', 0, 100, 0)
+    team = st.multiselect(
+     'Team',
+     [1, 2, 3, 4],
+     [1, 2, 3, 4])
+
+    if len(sme) > 0:
+        df = df[df['SME'].isin(sme)]
+    if len(team) > 0:
+        df = df[df['team'].isin(team)]
+    if len(skills) > 0:
+        for num in skills:
+            df = df[df[f'SKILL {num}'] == 1]
+    if outcomes != 0:
+        df = df[df['outcomespercentage'] > outcomes]
+
+with try_expander('Find Gaps'):
+    qualifications = st.selectbox(
+     'Qualifications',
+     ("All","Underqualified", "Qualified", "Overqualified"))
+    gaps = st.slider('Gap Score', -9, 8, -9)
+    if "Underqualified" == qualifications:
+        df = df[df['gapscore'] < 0]
+    if "Qualified" == qualifications:
+        df = df[df['gapscore'] == 0]
+    if "Overqualified" == qualifications:
+        df = df[df['gapscore'] > 0]
+    if gaps != -9:
+        df = df[df['gapscore'] >= gaps]
+
 
 # plot config options in sidebar
 with try_expander('Fill Vacancy'):
@@ -228,48 +267,6 @@ with try_expander('Format'):
         df["color"] = df.apply(lambda x: colors[x['group']-1], axis=1)
 
     df["group"] = df["group"].astype(str)
-
-with try_expander('Filter'):
-    skills = st.multiselect(
-     'Skills',
-     [1, 2, 3, 4, 5, 6, 7, 8],
-     [])
-    sme = st.multiselect(
-    'SME',
-    [1, 2, 3, 4, 5, 6, 7, 8],
-    [])
-    outcomes = st.slider('Positive outcome percentage >', 0, 100, 0)
-    team = st.multiselect(
-     'Team',
-     [1, 2, 3, 4],
-     [1, 2, 3, 4])
-
-    if len(sme) > 0:
-        df = df[df['SME'].isin(sme)]
-    if len(team) > 0:
-        df = df[df['team'].isin(team)]
-    if len(skills) > 0:
-        for num in skills:
-            df = df[df[f'SKILL {num}'] == 1]
-    if outcomes != 0:
-        df = df[df['outcomespercentage'] > outcomes]
-
-with try_expander('Find Gaps'):
-    qualifications = st.selectbox(
-     'Qualifications',
-     ("All","Underqualified", "Qualified", "Overqualified"))
-    gaps = st.slider('Gap Score', -9, 8, -9)
-    if "Underqualified" == qualifications:
-        df = df[df['gapscore'] < 0]
-    if "Qualified" == qualifications:
-        df = df[df['gapscore'] == 0]
-    if "Overqualified" == qualifications:
-        df = df[df['gapscore'] > 0]
-    if gaps != -9:
-        df = df[df['gapscore'] >= gaps]
-
-with try_expander('Key'):
-    st.markdown('''Sort by skills. Sort by outcome percentage.''')
 
 
 
@@ -404,10 +401,6 @@ p.toolbar.autohide = True
 st.header('Team Members: ')
 
 st.bokeh_chart(p)
-
-st.header('Fill Vacancies: ')
-
-st.header('Promote: ')
 
 with try_expander('Load Content', False):
     if st.checkbox('Upload your CSV', value=False):
