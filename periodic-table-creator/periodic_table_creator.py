@@ -1,6 +1,7 @@
 # based on https://docs.bokeh.org/en/latest/docs/gallery/periodic.html
 
 from io import StringIO
+from multiprocessing.dummy import Semaphore
 from PIL import Image
 import pandas as pd
 import streamlit as st
@@ -18,14 +19,103 @@ try:
 except:
     st.beta_set_page_config(layout="wide")
 
-try:
-    image = Image.open('periodic-table-creator/periodic-table-creator-icon-wide.png')
-except:
-    image = Image.open('periodic-table-creator-icon-wide.png')
+
+st.sidebar.title('Crown Castle Map')
+
+def determineStars(row):
+    stars = '<div class="rating">'
+    skills = [1, 2, 3, 4, 5, 6, 7, 8]
+    for num in skills:
+        if row['SME'] == num:
+            stars = stars + '<span style="color:gold; font-size: 30px">★</span>'
+        else:
+            if row[f'SKILL {num}'] == 1:
+                if row[f'jobskill{num}'] == 1:
+                    stars = stars + '<span style="color:#8E9595; font-size: 26px">★</span>'
+                else:
+                    stars = stars + '<span style="color:#3E8E4B; font-size: 26px">★</span>'
+            else:
+                if row[f'jobskill{num}'] == 1:
+                    stars = stars + '<span style="color:#ff636d; font-size: 26px">★</span>'
+                else:
+                    stars = stars + '<span style="color:#8E9595; font-size: 20px">☆</span>'
+    return stars + "</div>"
+
+def determineStarsVacancy(row, s=[1,1,1,1,1,1,1,1,1]):
+    stars = '<div class="rating">'
+    skills = [1, 2, 3, 4, 5, 6, 7, 8]
+    for num in skills:
+        if row['SME'] == num:
+            stars = stars + '<span style="color:gold; font-size: 30px">★</span>'
+        else:
+            if row[f'SKILL {num}'] == 1:
+                if s[num] == 1:
+                    stars = stars + '<span style="color:#8E9595; font-size: 26px">★</span>'
+                else:
+                    stars = stars + '<span style="color:#3E8E4B; font-size: 26px">★</span>'
+            else:
+                if s[num] == 1:
+                    stars = stars + '<span style="color:#ff636d; font-size: 26px">★</span>'
+                else:
+                    stars = stars + '<span style="color:#8E9595; font-size: 20px">☆</span>'
+    return stars + "</div>"
+
+def determineGaps(row):
+    gap = 0
+    skills = [1, 2, 3, 4, 5, 6, 7, 8]
+    for num in skills:
+        if row[f'SKILL {num}'] == 1:
+            if row[f'jobskill{num}'] == 1:
+                gap = gap + 0
+            else:
+                gap = gap + 1
+        else:
+            if row[f'jobskill{num}'] == 1:
+                gap = gap - 1
+            else:
+                gap = gap + 0
+    return gap
+
+def determineGapsVacancy(row, s=[1,1,1,1,1,1,1,1,1]):
+    gap = 0
+    skills = [1, 2, 3, 4, 5, 6, 7, 8]
+    for num in skills:
+        if row[f'SKILL {num}'] == 1:
+            if s[num] == 1:
+                gap = gap + 0
+            else:
+                gap = gap + 1
+        else:
+            if s[num] == 1:
+                gap = gap - 1
+            else:
+                gap = gap + 0
+    return gap
+
+def determineGapColor(row):
+    color=""
+    if row['gapscore'] > 0:
+        color='#4da3f7'
+    if row['gapscore'] == 0:
+        color='#92c6f7'
+    if row['gapscore'] < 0:
+        color='#d6ebff'
+    return color
 
 
-st.sidebar.image(image, use_column_width=True) # width=200 ) #
-#st.sidebar.title('Periodic Table Creator')
+def determineOutcomeColor(row):
+    color=""
+    if row['outcomespercentage'] >= 95:
+        color='#56ad63'
+    if row['outcomespercentage'] > 90:
+        color='#87cd92'
+    if row['outcomespercentage'] > 80:
+        color='#b3e0ba'
+    if row['outcomespercentage'] > 70:
+        color='#d8ecbd'
+    if row['outcomespercentage'] >= 0:
+        color='#edfcef'
+    return color
 
 
 def try_expander(expander_name, sidebar=True):
@@ -42,39 +132,13 @@ def try_expander(expander_name, sidebar=True):
 
 
 # load data
-with try_expander('Load Content', False):
-    if st.checkbox('Upload your CSV', value=False):
-        st.markdown('Upload your own Periodic Table CSV. Follow the example-format of "Edit CSV text" (utf-8 encoding, semicolon seperator, csv file-extension)')
-        uploaded_file = st.file_uploader('Upload your CSV file', type=['csv'], accept_multiple_files=False)
-    else:
-        uploaded_file = None
 
-    if uploaded_file is not None:
-        bytes_data = uploaded_file.read().decode("utf-8", "strict") 
-    else:
-        try:
-            with open('periodic-table-creator/periodic_nlp.csv', 'r') as f:
-                bytes_data = f.read()
-        except:
-            with open('periodic_nlp.csv', 'r') as f:
-                bytes_data = f.read()
-        
-    if st.checkbox('Edit CSV text', value=False):
-        bytes_data = st.text_area('CSV file', value=bytes_data, height=200, max_chars=100000)
-
-    data = StringIO(bytes_data)
-    try:
-        df = pd.read_csv(data, sep=';', header=0, encoding='utf-8', keep_default_na=False)
-    except:
-        df = pd.read_csv(data, sep=',', header=0, encoding='utf-8', keep_default_na=False)
-    
-
-    if st.checkbox('Show CSV data', value=False):
-        st.table(df)
-
-
+df = pd.read_csv("mapdataformatted.csv", header=0, encoding='utf-8')
+df['skillsdisplay'] = df.apply (lambda row: determineStars(row), axis=1)
+df['gapscore'] = df.apply (lambda row: determineGaps(row), axis=1)
+df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
 # edit data
-df["elementname"] = df["elementname"].str.replace('\\n', '\n', regex=False)
+df["lastName"] = df["lastName"].str.replace('\\n', '\n', regex=False)
 df["groupname"] = df["groupname"].str.replace('\\n', ' ', regex=False)
 
 df_group = pd.pivot_table(df, values='atomicnumber', index=['group','groupname'], 
@@ -91,35 +155,44 @@ groupnames = [str(x) for x in df_group.groupname]
 
 
 # plot config options in sidebar
-with try_expander('Text'):
-    plot_title = 'Periodic Table of Natural Language Processing Tasks'
-    plot_title = st.text_area('Title', value=plot_title, max_chars=100)
+with try_expander('Fill Vacancy'):
+    vacancy = st.selectbox(
+     'Vacancy',
+     ('None','T:1,R:B,L:1','T:1,R:B,L:2', 'T:2,R:B,L:2', 'T:3,R:A,L:1', 'T:3,R:B,L:1'))
+    if vacancy == 'T:1,R:B,L:1':
+        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, [0,0,1,0,0,0,0,0,0]), axis=1)
+        df['skillsdisplay'] = df.apply (lambda row: determineStarsVacancy(row, [0,0,1,0,0,0,0,0,0]), axis=1)
+        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+    if vacancy == 'T:1,R:B,L:2':
+        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, [0,0,1,1,0,0,0,0,0]), axis=1)
+        df['skillsdisplay'] = df.apply (lambda row: determineStarsVacancy(row, [0,0,1,1,0,0,0,0,0]), axis=1)
+        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+    if vacancy == 'T:3,R:A,L:1':
+        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, [0,1,1,1,0,0,0,0,0]), axis=1)
+        df['skillsdisplay'] = df.apply (lambda row: determineStarsVacancy(row, [0,1,1,1,0,0,0,0,0]), axis=1)
+        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+    if vacancy == 'None':
+        df['gapscore'] = df.apply (lambda row: determineGaps(row), axis=1)
+        df['skillsdisplay'] = df.apply (lambda row: determineStars(row), axis=1)
+        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
 
-    plot_fonts = ['Helvetica','Times'] #,'New Baskerville','Arial','century gothic','Bodoni MT', 'Lucida Sans Unicode']
-    plot_font = st.selectbox('Font', plot_fonts, index=0)
+plot_title = ''
+plot_font = 'Helvetica'
 
 with try_expander('Color'):
-    element_color = st.selectbox('Element Color', ['From datafile','Category20','Category20b','Category20c'], index=0)
-    title_color = st.color_picker('Title color', '#3B3838')
-    text_color = st.color_picker('Element Text color', '#3B3838')
-    groupname_color = st.color_picker('Groupname color', '#757171')
-    trademark_color = st.color_picker('Trademark color', '#757171')
-
-    if element_color.startswith('Category20'):
-        colors = all_palettes[element_color][len(groups)+2]
-        df["color"] = df.apply(lambda x: colors[x['group']-1], axis=1)
-
-    df["group"] = df["group"].astype(str)
+    color = st.selectbox('Color Gradient', ['Gap Score'], index=0)
+    if color == 'Outcome Percentage':
+        df['color'] = df.apply (lambda row: determineOutcomeColor(row), axis=1)
 
 
-with try_expander('Scaling'):
+with try_expander('Format'):
     plot_scale = st.slider('OVERALL SCALE', min_value=50, max_value=300, value=100, step=5, format='%d%%')/100.00
     
     plot_width = round(len(groups) * 100 * plot_scale)
-    plot_width = st.slider('Plot width', min_value=500, max_value=3000, value=plot_width, step=100, format='%dpx')
+    plot_width = st.slider('Plot width', min_value=500, max_value=3000, value=1600, step=100, format='%dpx')
     
     plot_height = round(len(periods) * 100 * plot_scale)
-    plot_height = st.slider('Plot height', min_value=300, max_value=2000, value=plot_height, step=20, format='%dpx')
+    plot_height = st.slider('Plot height', min_value=300, max_value=2000, value=1120, step=20, format='%dpx')
 
     title_size = round(48 * plot_scale)
     title_size = str(st.slider('Title', min_value=5, max_value=72, value=title_size, step=1, format='%dpx')) + 'px'
@@ -127,8 +200,8 @@ with try_expander('Scaling'):
     element_number_size = round(11 * plot_scale)
     element_number_size = str(st.slider('Atomic Number', min_value=5, max_value=72, value=element_number_size, step=1, format='%dpx')) + 'px'
     
-    element_symbol_size = round(22 * plot_scale)
-    element_symbol_size = str(st.slider('Symbol', min_value=5, max_value=72, value=element_symbol_size, step=1, format='%dpx')) + 'px'
+    element_firstName_size = 17
+    element_firstName_size = str(st.slider('firstName', min_value=5, max_value=72, value=element_firstName_size, step=1, format='%dpx')) + 'px'
     
     element_name_size = round(11 * plot_scale)
     element_name_size = str(st.slider('Full name', min_value=5, max_value=72, value=element_name_size, step=1, format='%dpx')) + 'px'
@@ -144,46 +217,83 @@ with try_expander('Scaling'):
 
     border_line_width = 2
     border_line_width = st.slider('Border line width', min_value=0, max_value=10, value=border_line_width, step=1, format='%dpx')
+    element_color = st.selectbox('Element Color', ['From datafile','Category20','Category20b','Category20c'], index=0)
+    title_color = st.color_picker('Title color', '#3B3838')
+    text_color = st.color_picker('Element Text color', '#3B3838')
+    groupname_color = st.color_picker('Groupname color', '#757171')
+    trademark_color = st.color_picker('Trademark color', '#757171')
 
-with try_expander('Trademark'):
-    trademark_tag = st.text_input('Trademark', value="www.innerdoc.com", max_chars=100)
-    location_x = str(st.number_input('Group location (x-axis)', min_value=0, max_value=len(groups), value=min(10, len(groups)) ))
-    location_y = str(st.number_input('Period location (y-axis)', min_value=0, max_value=len(periods), value=min(2, len(periods)) ))
+    if element_color.startswith('Category20'):
+        colors = all_palettes[element_color][len(groups)+2]
+        df["color"] = df.apply(lambda x: colors[x['group']-1], axis=1)
 
-with try_expander('About'):
-    st.markdown('''This Periodic Table Generator is created by [Rob van Zoest](https://www.linkedin.com/in/robvanzoest/). \
-The code is available on [github.com/innerdoc](https://github.com/innerdoc/periodic-table-creator). \
-It started with the idea for a blog about a [Periodic Table of Natural Language Processing Tasks](https://medium.com/innerdoc). \
-With the help of Streamlit and inspired by [Bokeh](https://docs.bokeh.org/en/latest/docs/gallery/periodic.html) \
-it became a dynamic creator that can be customized to your Periodic Table!''')
+    df["group"] = df["group"].astype(str)
+
+with try_expander('Filter'):
+    skills = st.multiselect(
+     'Skills',
+     [1, 2, 3, 4, 5, 6, 7, 8],
+     [])
+    sme = st.multiselect(
+    'SME',
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [])
+    outcomes = st.slider('Positive outcome percentage >', 0, 100, 0)
+    team = st.multiselect(
+     'Team',
+     [1, 2, 3, 4],
+     [1, 2, 3, 4])
+
+    if len(sme) > 0:
+        df = df[df['SME'].isin(sme)]
+    if len(team) > 0:
+        df = df[df['team'].isin(team)]
+    if len(skills) > 0:
+        for num in skills:
+            df = df[df[f'SKILL {num}'] == 1]
+    if outcomes != 0:
+        df = df[df['outcomespercentage'] > outcomes]
+
+with try_expander('Find Gaps'):
+    qualifications = st.selectbox(
+     'Qualifications',
+     ("All","Underqualified", "Qualified", "Overqualified"))
+    gaps = st.slider('Gap Score', -9, 8, -9)
+    if "Underqualified" == qualifications:
+        df = df[df['gapscore'] < 0]
+    if "Qualified" == qualifications:
+        df = df[df['gapscore'] == 0]
+    if "Overqualified" == qualifications:
+        df = df[df['gapscore'] > 0]
+    if gaps != -9:
+        df = df[df['gapscore'] >= gaps]
+
+with try_expander('Key'):
+    st.markdown('''Sort by skills. Sort by outcome percentage.''')
 
 
 
 
 # define figure
 TOOLTIPS = """
-    <div style="width:300px; padding:10px;background-color: @color;">
+    <div style="width:300px; padding:10px;background-color: white;">
         <div>
-            <span style="font-size: 36px; font-weight: bold;">@symbol</span>
+            <span style="font-size: 30px; font-weight: bold;">@firstName @lastName</span>
         </div>
         <div>
-            <span style="font-size: 14px; font-weight: bold; ">@groupname</span>
-        </div>
-        <br>
-        <div>
-            <span style="font-size: 20px; font-weight: bold; margin-bottom:20px">@atomicnumber - @elementname</span>
-        </div>
-        <div>
-            <span style="font-size: 14px; ">@excerpt</span>
+            <span style="font-size: 14px; font-weight: bold; ">@groupname Level: @level</span>
         </div>
         <br>
         <div>
-            <span style="font-size: 10px; ">@url</span>
+            <span style="font-size: 20px; font-weight: bold; margin-bottom:20px">Outcome: @Outcomes Scope: @Scope Outcomes Success: @outcomespercentage %</span>
         </div>
+        <br>
+        @skillsdisplay
         <div>
-            <span style="font-size: 10px; ">(@{group}, @{period})</span>
         </div>
 """
+
+
 
 p = figure(plot_width=plot_width, plot_height=plot_height,
     x_range=groups,
@@ -211,19 +321,45 @@ p.text(x=dodge("group", -0.4, range=p.x_range),
     text_font_size=element_number_size,
     **text_props)
 
-# print symbol
+p.text(x=dodge("group", -0.4, range=p.x_range), 
+    y=dodge("period", 0.3, range=p.y_range),
+    text='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="600" height="600" fill="white">
+
+  <title>Abstract user icon</title>
+
+  <defs>
+    <clipPath id="circular-border">
+      <circle cx="300" cy="300" r="280"/>
+    </clipPath>
+    <clipPath id="avoid-antialiasing-bugs">
+	  <rect width="100%" height="498"/>
+    </clipPath>
+  </defs>
+  
+  <circle cx="300" cy="300" r="280" fill="black" clip-path="url(#avoid-antialiasing-bugs)"/>
+  <circle cx="300" cy="230" r="115"/>
+  <circle cx="300" cy="550" r="205" clip-path="url(#circular-border)"/>
+</svg>''',
+    text_align="left",
+    text_font=value(plot_font),
+    text_font_style="italic",
+    text_font_size=element_number_size,
+    **text_props)
+
+
+# print firstName
 p.text(x=dodge("group", -0.2, range=p.x_range),
     y=dodge("period", 0.1, range=p.y_range),
-    text="symbol",
+    text="firstName",
     text_font=value(plot_font),
     text_font_style="bold",
-    text_font_size=element_symbol_size,
+    text_font_size=element_firstName_size,
     **text_props)
 
 # print element name
-p.text(x=dodge("group", 0.0, range=p.x_range),
+p.text(x=dodge("group", 0, range=p.x_range),
     y=dodge("period", -0.25, range=p.y_range),
-    text="elementname",
+    text="lastName",
     text_align="center",
     text_line_height=text_line_height,
     text_font=value(plot_font),
@@ -253,16 +389,6 @@ p.text(x=groups,
     text_color=groupname_color
     )
 
-# print trademark
-p.text(x=[location_x],
-    y=[location_y], 
-    text=[trademark_tag], 
-    text_align="center",
-    text_baseline="hanging",
-    text_color=trademark_color,
-    text_font=value(plot_font),
-    text_font_size=trademark_size
-    )
 
 p.outline_line_color = None
 p.grid.grid_line_color = None
@@ -275,6 +401,38 @@ p.hover.renderers = [r] # only hover element boxes
 # Set autohide to true to only show the toolbar when mouse is over plot
 p.toolbar.autohide = True
 
+st.header('Team Members: ')
+
 st.bokeh_chart(p)
+
+st.header('Fill Vacancies: ')
+
+st.header('Promote: ')
+
+with try_expander('Load Content', False):
+    if st.checkbox('Upload your CSV', value=False):
+        st.markdown('Upload your own Periodic Table CSV. Follow the example-format of "Edit CSV text" (utf-8 encoding, semicolon seperator, csv file-extension)')
+        uploaded_file = st.file_uploader('Upload your CSV file', type=['csv'], accept_multiple_files=False)
+    else:
+        uploaded_file = None
+
+    if uploaded_file is not None:
+        bytes_data = uploaded_file.read().decode("utf-8", "strict") 
+    else:
+        try:
+            with open('periodic-table-creator/periodic_nlp.csv', 'r') as f:
+                bytes_data = f.read()
+        except:
+            with open('periodic_nlp.csv', 'r') as f:
+                bytes_data = f.read()
+        
+    if st.checkbox('Edit CSV text', value=False):
+        bytes_data = st.text_area('CSV file', value=bytes_data, height=200, max_chars=100000)
+
+    data = StringIO(bytes_data)
+
+    if st.checkbox('Show CSV data', value=False):
+        st.table(df)
+
 
 
