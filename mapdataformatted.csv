@@ -1,85 +1,85 @@
-﻿team,member,role,level,rolelevel,Outcomes,Scope,SKILL 1,SKILL 2,SKILL 3,SKILL 4,SKILL 5,SKILL 6,SKILL 7,SKILL 8,name,SKILL 1,SKILL 2,SKILL 3,SKILL 4,SKILL 5,SKILL 6,SKILL 7,SKILL 8,SME,Gaps,excerpt,OUTCOMES %
-1,21,C,3,C3,C3 - ipsum lorem,C3 - Tellus cras,,,1,1,1,,,1,Antony Lucas,1,1,1,1,1,1,1,1,7,4,Antony Lucas Team: 1 Outcome: C3 - ipsum lorem %: 57,57
-1,20,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Nina Anderson,,,,1,,,,,,0,Nina Anderson Team: 1 Outcome: C1 - ipsum lorem %: 86,86
-1,19,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Kamren Mccoy,,1,1,1,1,,,,2,3,Kamren Mccoy Team: 1 Outcome: C1 - ipsum lorem %: 72,72
-1,18,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Johanna Carson,,1,,1,,,,,2,1,Johanna Carson Team: 1 Outcome: C1 - ipsum lorem %: 95,95
-1,17,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,1,1,1,,,,Maci Little,,,1,1,1,,,,,0,Maci Little Team: 1 Outcome: C1 - ipsum lorem %: 90,90
-1,16,B,3,B3,B3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,1,,Anika Hayden,1,1,1,,,,1,,,0,Anika Hayden Team: 1 Outcome: B3 - ipsum lorem %: 93,93
-1,15,B,2,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Jace Gay,,1,1,,,,,,,0,Jace Gay Team: 1 Outcome: B2 - ipsum lorem %: ,
-1,14,B,2,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,VACANT,,,,,,,,,,-2,VACANT Team: 1 Outcome: B2 - ipsum lorem %: 80,80
-1,13,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Miguel Glover,,1,,,,,,,,0,Miguel Glover Team: 1 Outcome: B1 - ipsum lorem %: 50,50
-1,12,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,VACANT,,,,,,,,,,-1,VACANT Team: 1 Outcome: B1 - ipsum lorem %: 75,75
-1,11,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Slade Arroyo,,1,,,,,,,,0,Slade Arroyo Team: 1 Outcome: B1 - ipsum lorem %: 60,60
-1,10,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Jaime Craig,,1,,,,,,,,0,Jaime Craig Team: 1 Outcome: B1 - ipsum lorem %: 85,85
-1,9,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Sergio Rhodes,,,,,,,,,,-1,Sergio Rhodes Team: 1 Outcome: B1 - ipsum lorem %: 66,66
-1,8,A,3,A3,A3 - ipsum lorem,A3-Tellus cras,1,1,1,1,1,1,,,Diego Estes,1,1,1,,1,,,,,-2,Diego Estes Team: 1 Outcome: A3 - ipsum lorem %: 95,95
-1,7,A,2,A2,A2 - ipsum lorem,A2- Tellus cras,1,1,1,1,,,,,Armando Rowland,1,1,1,1,,,,,,0,Armando Rowland Team: 1 Outcome: A2 - ipsum lorem %: ,
-1,6,A,2,A2,A2 - ipsum lorem,A2 -Tellus cras,1,1,1,1,1,,,,Antoine Jarvis,1,1,1,1,1,,,,,0,Antoine Jarvis Team: 1 Outcome: A2 - ipsum lorem %: 87,87
-1,5,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Jazlene Farrell,1,1,,,,,,,,-1,Jazlene Farrell Team: 1 Outcome: A1 - ipsum lorem %: 96,96
-1,4,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Jacquelyn Wall,1,,,,,,,,,-2,Jacquelyn Wall Team: 1 Outcome: A1 - ipsum lorem %: 64,64
-1,3,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Eileen Vance,1,,,,,,,,,-2,Eileen Vance Team: 1 Outcome: A1 - ipsum lorem %: 71,71
-1,2,A,1,A1,C3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,,,Coleman Meyers,1,1,1,,1,,,,5,1,Coleman Meyers Team: 1 Outcome: C3 - ipsum lorem %: 74,74
-1,1,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Briley Escobar,1,1,1,,,,,,3,0,Briley Escobar Team: 1 Outcome: A1 - ipsum lorem %: 90,90
-2,1,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Annabelle Casey,1,,1,,,,,,,-1,Annabelle Casey Team: 2 Outcome: A1 - ipsum lorem %: 80,80
-2,2,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Shiloh Barnes,1,1,1,,,,,,1,0,Shiloh Barnes Team: 2 Outcome: A1 - ipsum lorem %: 66,66
-2,3,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Patrick Clarke,1,1,1,,,,,,,0,Patrick Clarke Team: 2 Outcome: A1 - ipsum lorem %: 97,97
-2,4,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Kendra Clay,1,,1,,,,,,,-1,Kendra Clay Team: 2 Outcome: A1 - ipsum lorem %: 95,95
-2,5,A,1,A1,C3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,,,Myah Le,1,1,,,,,,,,-1,Myah Le Team: 2 Outcome: C3 - ipsum lorem %: 79,79
-2,6,A,2,A2,A2 - ipsum lorem,A2- Tellus cras,1,1,1,1,,,,,Brynn Pierce,1,1,1,1,,,,,,0,Brynn Pierce Team: 2 Outcome: A2 - ipsum lorem %: ,
-2,7,A,2,A2,A2 - ipsum lorem,A2 -Tellus cras,1,1,1,1,1,,,,Zavier Colon,1,1,1,1,1,,,,,0,Zavier Colon Team: 2 Outcome: A2 - ipsum lorem %: ,
-2,8,A,3,A3,A3 - ipsum lorem,A3-Tellus cras,1,1,1,1,1,1,,,Jairo Salinas,1,1,1,1,1,1,,,,0,Jairo Salinas Team: 2 Outcome: A3 - ipsum lorem %: ,
-2,9,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Gaven Harrison,,1,,,,,,,,0,Gaven Harrison Team: 2 Outcome: B1 - ipsum lorem %: 61,61
-2,10,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Allyson Meza,,1,,,,,1,,,1,Allyson Meza Team: 2 Outcome: B1 - ipsum lorem %: 63,63
-2,11,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Sadie Kent,,,,,,,,,,-1,Sadie Kent Team: 2 Outcome: B1 - ipsum lorem %: 56,56
-2,12,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Cooper Peck,,1,,,,,,,,0,Cooper Peck Team: 2 Outcome: B1 - ipsum lorem %: 59,59
-2,13,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Giselle Raymond,,1,,,,,,,,0,Giselle Raymond Team: 2 Outcome: B1 - ipsum lorem %: 72,72
-2,14,B,2,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,VACANT,,,,,,,,,,-2,VACANT Team: 2 Outcome: B2 - ipsum lorem %: 80,80
-2,15,B,2,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,VACANT,,,,,,,,,,-2,VACANT Team: 2 Outcome: B2 - ipsum lorem %: 51,51
-2,16,B,3,B3,B3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,1,,Mireya Morrison,1,1,1,,,,1,,,0,Mireya Morrison Team: 2 Outcome: B3 - ipsum lorem %: 50,50
-2,17,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,1,1,1,,,,VACANT,,,,,,,,,,-3,VACANT Team: 2 Outcome: C1 - ipsum lorem %: 54,54
-2,18,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Aedan Cantu,,,,1,,,,,,0,Aedan Cantu Team: 2 Outcome: C1 - ipsum lorem %: 54,54
-2,19,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Roman Kent,,,,1,,,,,,0,Roman Kent Team: 2 Outcome: C1 - ipsum lorem %: 85,85
-2,20,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,George Sampson,,,,1,,,,,,0,George Sampson Team: 2 Outcome: C1 - ipsum lorem %: 66,66
-2,21,C,3,C3,C3 - ipsum lorem,C3 - Tellus cras,,,1,1,1,,,1,Kenyon Collier,,,1,1,1,1,,1,6,1,Kenyon Collier Team: 2 Outcome: C3 - ipsum lorem %: 93,93
-3,1,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Brooklynn Potter,1,1,1,1,1,,,1,7,3,Brooklynn Potter Team: 3 Outcome: A1 - ipsum lorem %: 75,75
-3,2,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,VACANT,,,,,,,,,,-3,VACANT Team: 3 Outcome: A1 - ipsum lorem %: 98,98
-3,3,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Leticia Barnett,1,1,1,,,,,,,0,Leticia Barnett Team: 3 Outcome: A1 - ipsum lorem %: 100,100
-3,4,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Jonathan Hall,1,1,1,,,,,,,0,Jonathan Hall Team: 3 Outcome: A1 - ipsum lorem %: 82,82
-3,5,A,1,A1,C3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,,,Tara Hunt,1,1,1,,,1,,,1,1,Tara Hunt Team: 3 Outcome: C3 - ipsum lorem %: 57,57
-3,6,A,2,A2,A2 - ipsum lorem,A2- Tellus cras,1,1,1,1,,,,,Dayanara Klein,1,1,1,1,,,,,,0,Dayanara Klein Team: 3 Outcome: A2 - ipsum lorem %: 67,67
-3,7,A,2,A2,A2 - ipsum lorem,A2 -Tellus cras,1,1,1,1,1,,,,Jonathan Phillips,1,1,1,1,1,,,,3,0,Jonathan Phillips Team: 3 Outcome: A2 - ipsum lorem %: 79,79
-3,8,A,3,A3,A3 - ipsum lorem,A3-Tellus cras,1,1,1,1,1,1,,,Maxim Walsh,1,1,1,1,1,1,,,,0,Maxim Walsh Team: 3 Outcome: A3 - ipsum lorem %: 67,67
-3,9,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Ramiro Cobb,,1,,,,,,,,0,Ramiro Cobb Team: 3 Outcome: B1 - ipsum lorem %: 90,90
-3,10,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Livia Townsend,,1,,,,,,,,0,Livia Townsend Team: 3 Outcome: B1 - ipsum lorem %: 74,74
-3,11,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,VACANT,,,,,,,,,,-1,VACANT Team: 3 Outcome: B1 - ipsum lorem %: 86,86
-3,12,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Adrian Goodwin,,1,1,1,,,,,,2,Adrian Goodwin Team: 3 Outcome: B1 - ipsum lorem %: 53,53
-3,13,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Josue Whitney,,1,,,,,,,,0,Josue Whitney Team: 3 Outcome: B1 - ipsum lorem %: ,
-3,14,B,2,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Kenya Dudley,,1,1,,,,,,,0,Kenya Dudley Team: 3 Outcome: B2 - ipsum lorem %: ,
-3,15,B,2,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Jasmin Dillon,,1,1,,,,,,,0,Jasmin Dillon Team: 3 Outcome: B2 - ipsum lorem %: 50,50
-3,16,B,3,B3,B3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,1,,Lainey Farley,1,1,1,1,1,1,1,1,6,4,Lainey Farley Team: 3 Outcome: B3 - ipsum lorem %: 50,50
-3,17,C,3,C3,C3 - ipsum lorem,C3 - Tellus cras,,,1,1,1,,,1,Alivia Tyler,,,1,1,1,,,,,-1,Alivia Tyler Team: 3 Outcome: C3 - ipsum lorem %: 52,52
-3,18,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,1,1,1,,,,Elliana Reeves,,,1,1,1,,,,,0,Elliana Reeves Team: 3 Outcome: C1 - ipsum lorem %: 56,56
-3,19,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Jacquelyn French,,,,1,,,,,,0,Jacquelyn French Team: 3 Outcome: C1 - ipsum lorem %: 80,80
-3,20,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Leon Montoya,,,,1,,,,,,0,Leon Montoya Team: 3 Outcome: C1 - ipsum lorem %: 100,100
-3,21,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Edwin Rivers,,,1,1,1,,,,,2,Edwin Rivers Team: 3 Outcome: C1 - ipsum lorem %: 98,98
-4,1,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Jaqueline Yu,1,1,1,,,,,,,0,Jaqueline Yu Team: 4 Outcome: A1 - ipsum lorem %: 94,94
-4,2,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Milton Fox,1,1,1,,,1,,,,1,Milton Fox Team: 4 Outcome: A1 - ipsum lorem %: 61,61
-4,3,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Mallory Wu,1,1,1,,,,,,,0,Mallory Wu Team: 4 Outcome: A1 - ipsum lorem %: 90,90
-4,4,A,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Kaliyah Mason,1,1,1,,,1,,,,1,Kaliyah Mason Team: 4 Outcome: A1 - ipsum lorem %: 56,56
-4,5,A,1,A1,C3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,,,Tia Mcbride,1,1,1,,1,,,,2,1,Tia Mcbride Team: 4 Outcome: C3 - ipsum lorem %: 72,72
-4,6,A,2,A2,A2 - ipsum lorem,A2- Tellus cras,1,1,1,1,,,,,Annika Nash,1,1,1,1,,,,,,0,Annika Nash Team: 4 Outcome: A2 - ipsum lorem %: 77,77
-4,7,A,2,A2,A2 - ipsum lorem,A2 -Tellus cras,1,1,1,1,1,,,,Sydney Haynes,1,1,1,1,1,,,,,0,Sydney Haynes Team: 4 Outcome: A2 - ipsum lorem %: 53,53
-4,8,A,3,A3,A3 - ipsum lorem,A3-Tellus cras,1,1,1,1,1,1,,,Angie Krause,1,,1,1,1,1,,,,-1,Angie Krause Team: 4 Outcome: A3 - ipsum lorem %: 64,64
-4,9,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Pamela Mcmillan,1,1,1,1,1,1,,,4,5,Pamela Mcmillan Team: 4 Outcome: B1 - ipsum lorem %: 80,80
-4,10,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Steve Bolton,,1,,,,,,,,0,Steve Bolton Team: 4 Outcome: B1 - ipsum lorem %: 94,94
-4,11,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Beckett Moreno,,1,,,,,,,,0,Beckett Moreno Team: 4 Outcome: B1 - ipsum lorem %: 56,56
-4,12,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Kendall Weiss,,1,,,,,,,,0,Kendall Weiss Team: 4 Outcome: B1 - ipsum lorem %: 82,82
-4,13,B,1,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Ben Leonard,,,,,,,,,,-1,Ben Leonard Team: 4 Outcome: B1 - ipsum lorem %: 76,76
-4,14,B,2,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Anya Cole,,1,1,,,,,,,0,Anya Cole Team: 4 Outcome: B2 - ipsum lorem %: 64,64
-4,15,B,2,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Finley Wiggins,,1,1,,,,,,,0,Finley Wiggins Team: 4 Outcome: B2 - ipsum lorem %: 96,96
-4,16,B,3,B3,B3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,1,,Cristal Savage,1,1,1,,,,1,1,1,1,Cristal Savage Team: 4 Outcome: B3 - ipsum lorem %: 73,73
-4,17,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,1,1,1,,,,Cristina Barry,,,1,,1,,,,,-1,Cristina Barry Team: 4 Outcome: C1 - ipsum lorem %: 87,87
-4,18,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Landon Rios,,,,1,,,,,,0,Landon Rios Team: 4 Outcome: C1 - ipsum lorem %: 59,59
-4,19,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Diana Gentry,,,,1,,,,,,0,Diana Gentry Team: 4 Outcome: C1 - ipsum lorem %: 60,60
-4,20,C,1,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Sylvia Cox,,,,1,,,,,,0,Sylvia Cox Team: 4 Outcome: C1 - ipsum lorem %: 63,63
-4,21,C,3,C3,C3 - ipsum lorem,C3 - Tellus cras,,,1,1,1,,,1,Kole Stephenson,,,1,1,1,,,,,-1,Kole Stephenson Team: 4 Outcome: C3 - ipsum lorem %: 89,89
+﻿groupname,group,team,period,role,level,index,atomicnumber,Outcomes,Scope,jobskill1,jobskill2,jobskill3,jobskill4,jobskill5,jobskill6,jobskill7,jobskill8,firstName,lastName,SKILL 1,SKILL 2,SKILL 3,SKILL 4,SKILL 5,SKILL 6,SKILL 7,SKILL 8,SME,Gaps,excerpt,outcomespercentage,color
+Team 1 Role: A,1,1,1,A,1,1,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Briley,Escobar,1,1,1,,,,,,3,0,Escobar Team: 1 Outcome: A1 - ipsum lorem %: 90,90,#3182bd
+Team 1 Role: A,1,1,2,A,1,2,A1,C3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,,,Coleman,Meyers,1,1,1,,1,,,,5,1,Meyers Team: 1 Outcome: C3 - ipsum lorem %: 74,74,#3182bd
+Team 1 Role: A,1,1,3,A,1,3,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Eileen,Vance,1,,,,,,,,,-2,Vance Team: 1 Outcome: A1 - ipsum lorem %: 71,71,#3182bd
+Team 1 Role: A,1,1,4,A,1,4,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Jacquelyn,Wall,1,,,,,,,,,-2,Wall Team: 1 Outcome: A1 - ipsum lorem %: 64,64,#3182bd
+Team 1 Role: A,1,1,5,A,1,5,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Jazlene,Farrell,1,1,,,,,,,,-1,Farrell Team: 1 Outcome: A1 - ipsum lorem %: 96,96,#3182bd
+Team 1 Role: A,1,1,6,A,2,6,A2,A2 - ipsum lorem,A2 -Tellus cras,1,1,1,1,1,,,,Antoine,Jarvis,1,1,1,1,1,,,,,0,Jarvis Team: 1 Outcome: A2 - ipsum lorem %: 87,87,#3182bd
+Team 1 Role: A,1,1,7,A,2,7,A2,A2 - ipsum lorem,A2- Tellus cras,1,1,1,1,,,,,Armando,Rowland,1,1,1,1,,,,,,0,Rowland Team: 1 Outcome: A2 - ipsum lorem %: ,,#3182bd
+Team 1 Role: A,1,1,8,A,3,8,A3,A3 - ipsum lorem,A3-Tellus cras,1,1,1,1,1,1,,,Diego,Estes,1,1,1,,1,,,,,-2,Estes Team: 1 Outcome: A3 - ipsum lorem %: 95,95,#3182bd
+Team 1 Role: B,2,1,1,B,1,9,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Sergio,Rhodes,,,,,,,,,,-1,Rhodes Team: 1 Outcome: B1 - ipsum lorem %: 66,66,#3182bd
+Team 1 Role: B,2,1,2,B,1,10,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Jaime,Craig,,1,,,,,,,,0,Craig Team: 1 Outcome: B1 - ipsum lorem %: 85,85,#3182bd
+Team 1 Role: B,2,1,3,B,1,11,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Slade,Arroyo,,1,,,,,,,,0,Arroyo Team: 1 Outcome: B1 - ipsum lorem %: 60,60,#3182bd
+Team 1 Role: B,2,1,4,B,1,12,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,VACANT,,,,,,,,,,,-1, Team: 1 Outcome: B1 - ipsum lorem %: 75,75,#808080
+Team 1 Role: B,2,1,5,B,1,13,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Miguel,Glover,,1,,,,,,,,0,Glover Team: 1 Outcome: B1 - ipsum lorem %: 50,50,#3182bd
+Team 1 Role: B,2,1,6,B,2,14,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,VACANT,,,,,,,,,,,-2, Team: 1 Outcome: B2 - ipsum lorem %: 80,80,#808080
+Team 1 Role: B,2,1,7,B,2,15,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Jace,Gay,,1,1,,,,,,,0,Gay Team: 1 Outcome: B2 - ipsum lorem %: ,,#3182bd
+Team 1 Role: B,2,1,8,B,3,16,B3,B3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,1,,Anika,Hayden,1,1,1,,,,1,,,0,Hayden Team: 1 Outcome: B3 - ipsum lorem %: 93,93,#3182bd
+Team 1 Role: C,3,1,1,C,1,17,C1,C1 - ipsum lorem,C1 - Tellus cras,,,1,1,1,,,,Maci,Little,,,1,1,1,,,,,0,Little Team: 1 Outcome: C1 - ipsum lorem %: 90,90,#3182bd
+Team 1 Role: C,3,1,2,C,1,18,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Johanna,Carson,,1,,1,,,,,2,1,Carson Team: 1 Outcome: C1 - ipsum lorem %: 95,95,#3182bd
+Team 1 Role: C,3,1,3,C,1,19,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Kamren,Mccoy,,1,1,1,1,,,,2,3,Mccoy Team: 1 Outcome: C1 - ipsum lorem %: 72,72,#3182bd
+Team 1 Role: C,3,1,4,C,1,20,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Nina,Anderson,,,,1,,,,,,0,Anderson Team: 1 Outcome: C1 - ipsum lorem %: 86,86,#3182bd
+Team 1 Role: C,3,1,5,C,3,21,C3,C3 - ipsum lorem,C3 - Tellus cras,,,1,1,1,,,1,Antony,Lucas,1,1,1,1,1,1,1,1,7,4,Lucas Team: 1 Outcome: C3 - ipsum lorem %: 57,57,#3182bd
+Team 2 Role: A,4,2,1,A,1,22,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Annabelle,Casey,1,,1,,,,,,,-1,Casey Team: 2 Outcome: A1 - ipsum lorem %: 80,80,#3182bd
+Team 2 Role: A,4,2,2,A,1,23,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Shiloh,Barnes,1,1,1,,,,,,1,0,Barnes Team: 2 Outcome: A1 - ipsum lorem %: 66,66,#3182bd
+Team 2 Role: A,4,2,3,A,1,24,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Patrick,Clarke,1,1,1,,,,,,,0,Clarke Team: 2 Outcome: A1 - ipsum lorem %: 97,97,#3182bd
+Team 2 Role: A,4,2,4,A,1,25,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Kendra,Clay,1,,1,,,,,,,-1,Clay Team: 2 Outcome: A1 - ipsum lorem %: 95,95,#3182bd
+Team 2 Role: A,4,2,5,A,1,26,A1,C3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,,,Myah,Le,1,1,,,,,,,,-1,Le Team: 2 Outcome: C3 - ipsum lorem %: 79,79,#3182bd
+Team 2 Role: A,4,2,6,A,2,27,A2,A2 - ipsum lorem,A2- Tellus cras,1,1,1,1,,,,,Brynn,Pierce,1,1,1,1,,,,,,0,Pierce Team: 2 Outcome: A2 - ipsum lorem %: ,,#3182bd
+Team 2 Role: A,4,2,7,A,2,28,A2,A2 - ipsum lorem,A2 -Tellus cras,1,1,1,1,1,,,,Zavier,Colon,1,1,1,1,1,,,,,0,Colon Team: 2 Outcome: A2 - ipsum lorem %: ,,#3182bd
+Team 2 Role: A,4,2,8,A,3,29,A3,A3 - ipsum lorem,A3-Tellus cras,1,1,1,1,1,1,,,Jairo,Salinas,1,1,1,1,1,1,,,,0,Salinas Team: 2 Outcome: A3 - ipsum lorem %: ,,#3182bd
+Team 2 Role: B,5,2,1,B,1,30,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Gaven,Harrison,,1,,,,,,,,0,Harrison Team: 2 Outcome: B1 - ipsum lorem %: 61,61,#3182bd
+Team 2 Role: B,5,2,2,B,1,31,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Allyson,Meza,,1,,,,,1,,,1,Meza Team: 2 Outcome: B1 - ipsum lorem %: 63,63,#3182bd
+Team 2 Role: B,5,2,3,B,1,32,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Sadie,Kent,,,,,,,,,,-1,Kent Team: 2 Outcome: B1 - ipsum lorem %: 56,56,#3182bd
+Team 2 Role: B,5,2,4,B,1,33,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Cooper,Peck,,1,,,,,,,,0,Peck Team: 2 Outcome: B1 - ipsum lorem %: 59,59,#3182bd
+Team 2 Role: B,5,2,5,B,1,34,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Giselle,Raymond,,1,,,,,,,,0,Raymond Team: 2 Outcome: B1 - ipsum lorem %: 72,72,#3182bd
+Team 2 Role: B,5,2,6,B,2,35,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,VACANT,,,,,,,,,,,-2, Team: 2 Outcome: B2 - ipsum lorem %: 80,80,#808080
+Team 2 Role: B,5,2,7,B,2,36,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,VACANT,,,,,,,,,,,-2, Team: 2 Outcome: B2 - ipsum lorem %: 51,51,#808080
+Team 2 Role: B,5,2,8,B,3,37,B3,B3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,1,,Mireya,Morrison,1,1,1,,,,1,,,0,Morrison Team: 2 Outcome: B3 - ipsum lorem %: 50,50,#3182bd
+Team 2 Role: C,6,2,1,C,1,38,C1,C1 - ipsum lorem,C1 - Tellus cras,,,1,1,1,,,,VACANT,,,,,,,,,,,-3, Team: 2 Outcome: C1 - ipsum lorem %: 54,54,#808080
+Team 2 Role: C,6,2,2,C,1,39,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Aedan,Cantu,,,,1,,,,,,0,Cantu Team: 2 Outcome: C1 - ipsum lorem %: 54,54,#3182bd
+Team 2 Role: C,6,2,3,C,1,40,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Roman,Kent,,,,1,,,,,,0,Kent Team: 2 Outcome: C1 - ipsum lorem %: 85,85,#3182bd
+Team 2 Role: C,6,2,4,C,1,41,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,George,Sampson,,,,1,,,,,,0,Sampson Team: 2 Outcome: C1 - ipsum lorem %: 66,66,#3182bd
+Team 2 Role: C,6,2,5,C,3,42,C3,C3 - ipsum lorem,C3 - Tellus cras,,,1,1,1,,,1,Kenyon,Collier,,,1,1,1,1,,1,6,1,Collier Team: 2 Outcome: C3 - ipsum lorem %: 93,93,#3182bd
+Team 3 Role: A,7,3,1,A,1,43,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Brooklynn,Potter,1,1,1,1,1,,,1,7,3,Potter Team: 3 Outcome: A1 - ipsum lorem %: 75,75,#3182bd
+Team 3 Role: A,7,3,2,A,1,44,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,VACANT,,,,,,,,,,,-3, Team: 3 Outcome: A1 - ipsum lorem %: 98,98,#808080
+Team 3 Role: A,7,3,3,A,1,45,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Leticia,Barnett,1,1,1,,,,,,,0,Barnett Team: 3 Outcome: A1 - ipsum lorem %: 100,100,#3182bd
+Team 3 Role: A,7,3,4,A,1,46,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Jonathan,Hall,1,1,1,,,,,,,0,Hall Team: 3 Outcome: A1 - ipsum lorem %: 82,82,#3182bd
+Team 3 Role: A,7,3,5,A,1,47,A1,C3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,,,Tara,Hunt,1,1,1,,,1,,,1,1,Hunt Team: 3 Outcome: C3 - ipsum lorem %: 57,57,#3182bd
+Team 3 Role: A,7,3,6,A,2,48,A2,A2 - ipsum lorem,A2- Tellus cras,1,1,1,1,,,,,Dayanara,Klein,1,1,1,1,,,,,,0,Klein Team: 3 Outcome: A2 - ipsum lorem %: 67,67,#3182bd
+Team 3 Role: A,7,3,7,A,2,49,A2,A2 - ipsum lorem,A2 -Tellus cras,1,1,1,1,1,,,,Jonathan,Phillips,1,1,1,1,1,,,,3,0,Phillips Team: 3 Outcome: A2 - ipsum lorem %: 79,79,#3182bd
+Team 3 Role: A,7,3,8,A,3,50,A3,A3 - ipsum lorem,A3-Tellus cras,1,1,1,1,1,1,,,Maxim,Walsh,1,1,1,1,1,1,,,,0,Walsh Team: 3 Outcome: A3 - ipsum lorem %: 67,67,#3182bd
+Team 3 Role: B,8,3,1,B,1,51,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Ramiro,Cobb,,1,,,,,,,,0,Cobb Team: 3 Outcome: B1 - ipsum lorem %: 90,90,#3182bd
+Team 3 Role: B,8,3,2,B,1,52,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Livia,Townsend,,1,,,,,,,,0,Townsend Team: 3 Outcome: B1 - ipsum lorem %: 74,74,#3182bd
+Team 3 Role: B,8,3,3,B,1,53,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,VACANT,,,,,,,,,,,-1, Team: 3 Outcome: B1 - ipsum lorem %: 86,86,#808080
+Team 3 Role: B,8,3,4,B,1,54,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Adrian,Goodwin,,1,1,1,,,,,,2,Goodwin Team: 3 Outcome: B1 - ipsum lorem %: 53,53,#3182bd
+Team 3 Role: B,8,3,5,B,1,55,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Josue,Whitney,,1,,,,,,,,0,Whitney Team: 3 Outcome: B1 - ipsum lorem %: ,,#3182bd
+Team 3 Role: B,8,3,6,B,2,56,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Kenya,Dudley,,1,1,,,,,,,0,Dudley Team: 3 Outcome: B2 - ipsum lorem %: ,,#3182bd
+Team 3 Role: B,8,3,7,B,2,57,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Jasmin,Dillon,,1,1,,,,,,,0,Dillon Team: 3 Outcome: B2 - ipsum lorem %: 50,50,#3182bd
+Team 3 Role: B,8,3,8,B,3,58,B3,B3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,1,,Lainey,Farley,1,1,1,1,1,1,1,1,6,4,Farley Team: 3 Outcome: B3 - ipsum lorem %: 50,50,#3182bd
+Team 3 Role: C,9,3,1,C,3,59,C3,C3 - ipsum lorem,C3 - Tellus cras,,,1,1,1,,,1,Alivia,Tyler,,,1,1,1,,,,,-1,Tyler Team: 3 Outcome: C3 - ipsum lorem %: 52,52,#3182bd
+Team 3 Role: C,9,3,2,C,1,60,C1,C1 - ipsum lorem,C1 - Tellus cras,,,1,1,1,,,,Elliana,Reeves,,,1,1,1,,,,,0,Reeves Team: 3 Outcome: C1 - ipsum lorem %: 56,56,#3182bd
+Team 3 Role: C,9,3,3,C,1,61,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Jacquelyn,French,,,,1,,,,,,0,French Team: 3 Outcome: C1 - ipsum lorem %: 80,80,#3182bd
+Team 3 Role: C,9,3,4,C,1,62,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Leon,Montoya,,,,1,,,,,,0,Montoya Team: 3 Outcome: C1 - ipsum lorem %: 100,100,#3182bd
+Team 3 Role: C,9,3,5,C,1,63,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Edwin,Rivers,,,1,1,1,,,,,2,Rivers Team: 3 Outcome: C1 - ipsum lorem %: 98,98,#3182bd
+Team 4 Role: A,10,4,1,A,1,64,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Jaqueline,Yu,1,1,1,,,,,,,0,Yu Team: 4 Outcome: A1 - ipsum lorem %: 94,94,#3182bd
+Team 4 Role: A,10,4,2,A,1,65,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Milton,Fox,1,1,1,,,1,,,,1,Fox Team: 4 Outcome: A1 - ipsum lorem %: 61,61,#3182bd
+Team 4 Role: A,10,4,3,A,1,66,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Mallory,Wu,1,1,1,,,,,,,0,Wu Team: 4 Outcome: A1 - ipsum lorem %: 90,90,#3182bd
+Team 4 Role: A,10,4,4,A,1,67,A1,A1 - ipsum lorem,A1- Tellus cras,1,1,1,,,,,,Kaliyah,Mason,1,1,1,,,1,,,,1,Mason Team: 4 Outcome: A1 - ipsum lorem %: 56,56,#3182bd
+Team 4 Role: A,10,4,5,A,1,68,A1,C3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,,,Tia,Mcbride,1,1,1,,1,,,,2,1,Mcbride Team: 4 Outcome: C3 - ipsum lorem %: 72,72,#3182bd
+Team 4 Role: A,10,4,6,A,2,69,A2,A2 - ipsum lorem,A2- Tellus cras,1,1,1,1,,,,,Annika,Nash,1,1,1,1,,,,,,0,Nash Team: 4 Outcome: A2 - ipsum lorem %: 77,77,#3182bd
+Team 4 Role: A,10,4,7,A,2,70,A2,A2 - ipsum lorem,A2 -Tellus cras,1,1,1,1,1,,,,Sydney,Haynes,1,1,1,1,1,,,,,0,Haynes Team: 4 Outcome: A2 - ipsum lorem %: 53,53,#3182bd
+Team 4 Role: A,10,4,8,A,3,71,A3,A3 - ipsum lorem,A3-Tellus cras,1,1,1,1,1,1,,,Angie,Krause,1,,1,1,1,1,,,,-1,Krause Team: 4 Outcome: A3 - ipsum lorem %: 64,64,#3182bd
+Team 4 Role: B,11,4,1,B,1,72,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Pamela,Mcmillan,1,1,1,1,1,1,,,4,5,Mcmillan Team: 4 Outcome: B1 - ipsum lorem %: 80,80,#3182bd
+Team 4 Role: B,11,4,2,B,1,73,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Steve,Bolton,,1,,,,,,,,0,Bolton Team: 4 Outcome: B1 - ipsum lorem %: 94,94,#3182bd
+Team 4 Role: B,11,4,3,B,1,74,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Beckett,Moreno,,1,,,,,,,,0,Moreno Team: 4 Outcome: B1 - ipsum lorem %: 56,56,#3182bd
+Team 4 Role: B,11,4,4,B,1,75,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Kendall,Weiss,,1,,,,,,,,0,Weiss Team: 4 Outcome: B1 - ipsum lorem %: 82,82,#3182bd
+Team 4 Role: B,11,4,5,B,1,76,B1,B1 - ipsum lorem,B1 - Tellus cras,,1,,,,,,,Ben,Leonard,,,,,,,,,,-1,Leonard Team: 4 Outcome: B1 - ipsum lorem %: 76,76,#3182bd
+Team 4 Role: B,11,4,6,B,2,77,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Anya,Cole,,1,1,,,,,,,0,Cole Team: 4 Outcome: B2 - ipsum lorem %: 64,64,#3182bd
+Team 4 Role: B,11,4,7,B,2,78,B2,B2 - ipsum lorem,B2 - Tellus cras,,1,1,,,,,,Finley,Wiggins,,1,1,,,,,,,0,Wiggins Team: 4 Outcome: B2 - ipsum lorem %: 96,96,#3182bd
+Team 4 Role: B,11,4,8,B,3,79,B3,B3 - ipsum lorem,B3 - Tellus cras,1,1,1,,,,1,,Cristal,Savage,1,1,1,,,,1,1,1,1,Savage Team: 4 Outcome: B3 - ipsum lorem %: 73,73,#3182bd
+Team 4 Role: C,12,4,1,C,1,80,C1,C1 - ipsum lorem,C1 - Tellus cras,,,1,1,1,,,,Cristina,Barry,,,1,,1,,,,,-1,Barry Team: 4 Outcome: C1 - ipsum lorem %: 87,87,#3182bd
+Team 4 Role: C,12,4,2,C,1,81,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Landon,Rios,,,,1,,,,,,0,Rios Team: 4 Outcome: C1 - ipsum lorem %: 59,59,#3182bd
+Team 4 Role: C,12,4,3,C,1,82,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Diana,Gentry,,,,1,,,,,,0,Gentry Team: 4 Outcome: C1 - ipsum lorem %: 60,60,#3182bd
+Team 4 Role: C,12,4,4,C,1,83,C1,C1 - ipsum lorem,C1 - Tellus cras,,,,1,,,,,Sylvia,Cox,,,,1,,,,,,0,Cox Team: 4 Outcome: C1 - ipsum lorem %: 63,63,#3182bd
+Team 4 Role: C,12,4,5,C,3,84,C3,C3 - ipsum lorem,C3 - Tellus cras,,,1,1,1,,,1,Kole,Stephenson,,,1,1,1,,,,,-1,Stephenson Team: 4 Outcome: C3 - ipsum lorem %: 89,89,#3182bd
