@@ -333,7 +333,7 @@ TOOLTIPS = """
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <div style="width:300px; padding:10px;background-color: white;">
         <div>
-            <span style="font-size: 30px; font-weight: bold;">@firstName @lastName @role</span>
+            <span style="font-size: 18px; font-weight: bold;">@firstName @lastName @role</span>
         </div>
         <div>
             <span style="font-size: 14px; font-weight: bold; ">@team level: @level</span>
@@ -343,10 +343,10 @@ TOOLTIPS = """
         </div>
         <br>
         <div>
-            <span style="font-size: 20px; font-weight: bold; margin-bottom:20px">Outcome: @Outcomes Scope: @Scope Outcomes Success: @outcomespercentage %</span>
+            <span style="font-size: 18px; font-weight: bold; margin-bottom:20px">Outcome: @Outcomes Scope: @Scope Outcomes Success: @outcomespercentage %</span>
         </div>
         <div>
-            <span style="font-size: 20px; font-weight: bold; margin-bottom:20px">
+            <span style="font-size: 18px; font-weight: bold; margin-bottom:20px">
             Innovation @Innovation/@jsInnovation : @dsplyInnovation <br>
             Agility @Agility/@jsAgility : @dsplyAgility <br>
             Judgement @Judgement/@jsJudgement : @dsplyJudgement  <br>
