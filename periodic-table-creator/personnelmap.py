@@ -211,8 +211,8 @@ with try_expander('Filter'):
     outcomes = st.slider('Positive outcome percentage >', 0, 100, 0)
     team = st.multiselect(
      'Team',
-     ["Corp", "TA", "Learning", "Immersion","Coaching"],
-     ["Corp", "TA", "Learning", "Immersion","Coaching"])
+     ["Corp", "TA", "Learning","Learning Con't", "Immersion","Immersion Con't","Coaching"],
+     ["Corp", "TA", "Learning","Learning Con't", "Immersion","Immersion Con't","Coaching"])
 
     if len(team) > 0:
         df = df[df['team'].isin(team)]
@@ -333,7 +333,7 @@ TOOLTIPS = """
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <div style="width:300px; padding:10px;background-color: white;">
         <div>
-            <span style="font-size: 30px; font-weight: bold;">@firstName @lastName</span>
+            <span style="font-size: 30px; font-weight: bold;">@firstName @lastName @role</span>
         </div>
         <div>
             <span style="font-size: 14px; font-weight: bold; ">@team level: @level</span>
