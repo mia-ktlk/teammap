@@ -284,10 +284,10 @@ with try_expander('Format'):
     plot_scale = st.slider('OVERALL SCALE', min_value=50, max_value=300, value=100, step=5, format='%d%%')/100.00
     
     plot_width = round(len(groups) * 100 * plot_scale)
-    plot_width = st.slider('Plot width', min_value=500, max_value=3000, value=1600, step=100, format='%dpx')
+    plot_width = st.slider('Plot width', min_value=500, max_value=3000, value=950, step=100, format='%dpx')
     
     plot_height = round(len(periods) * 100 * plot_scale)
-    plot_height = st.slider('Plot height', min_value=300, max_value=2000, value=1120, step=20, format='%dpx')
+    plot_height = st.slider('Plot height', min_value=300, max_value=2000, value=940, step=20, format='%dpx')
 
     title_size = round(48 * plot_scale)
     title_size = str(st.slider('Title', min_value=5, max_value=72, value=title_size, step=1, format='%dpx')) + 'px'
