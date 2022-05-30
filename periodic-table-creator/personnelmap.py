@@ -11,6 +11,8 @@ from bokeh.palettes import all_palettes, Turbo256
 from bokeh.transform import dodge, factor_cmap
 from bokeh.models import Title
 from bokeh.core.properties import value
+import streamlit.components.v1 as components
+
 
 
 # must be called as first command
@@ -24,73 +26,118 @@ st.sidebar.title('Crown Castle Map')
 
 def determineStars(row):
     stars = '<div class="rating">'
-    skills = [1, 2, 3, 4, 5, 6, 7, 8]
-    for num in skills:
-        if row['SME'] == num:
-            stars = stars + '<span style="color:gold; font-size: 30px">★</span>'
-        else:
-            if row[f'SKILL {num}'] == 1:
-                if row[f'jobskill{num}'] == 1:
-                    stars = stars + '<span style="color:#8E9595; font-size: 26px">★</span>'
-                else:
-                    stars = stars + '<span style="color:#3E8E4B; font-size: 26px">★</span>'
+    skills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
+    for s in skills:
+        if row[s] >= 1:
+            if row[s] >= 1:
+                stars = stars + '<span style="color:#8E9595; font-size: 26px">★</span>'
             else:
-                if row[f'jobskill{num}'] == 1:
-                    stars = stars + '<span style="color:#ff636d; font-size: 26px">★</span>'
-                else:
-                    stars = stars + '<span style="color:#8E9595; font-size: 20px">☆</span>'
+                stars = stars + '<span style="color:#3E8E4B; font-size: 26px">★</span>'
+        else:
+            if row[f'js{s}'] >= 1:
+                stars = stars + '<span style="color:#ff636d; font-size: 26px">★</span>'
+            else:
+                stars = stars + '<span style="color:#8E9595; font-size: 20px">☆</span>'
     return stars + "</div>"
 
-def determineStarsVacancy(row, s=[1,1,1,1,1,1,1,1,1]):
-    stars = '<div class="rating">'
-    skills = [1, 2, 3, 4, 5, 6, 7, 8]
-    for num in skills:
-        if row['SME'] == num:
-            stars = stars + '<span style="color:gold; font-size: 30px">★</span>'
+def determineSkillsDisplay(row, s):
+    stars = ''
+    isRequired = row[f'js{s}'] > 0
+    hasSkill = row[s] > 0
+    if isRequired: 
+        diff = row[s] - row[f'js{s}']
+        if diff == 0:
+            stars = "☑" * row[s]
+        if diff < 0:
+            have = "☑" * row[s]
+            missing = "☒" * abs(diff)
+            stars = have + missing
+        if diff > 0:
+            have = "☑" * row[s]
+            extra = "★" * diff
+            stars = have + extra
+
+    else:
+        if not hasSkill:
+            stars = "☒" * row[f'js{s}']
         else:
-            if row[f'SKILL {num}'] == 1:
-                if s[num] == 1:
-                    stars = stars + '<span style="color:#8E9595; font-size: 26px">★</span>'
-                else:
-                    stars = stars + '<span style="color:#3E8E4B; font-size: 26px">★</span>'
-            else:
-                if s[num] == 1:
-                    stars = stars + '<span style="color:#ff636d; font-size: 26px">★</span>'
-                else:
-                    stars = stars + '<span style="color:#8E9595; font-size: 20px">☆</span>'
-    return stars + "</div>"
+            stars = "★" * row[s]
+
+    if row['firstName'] == "VACANT":
+        stars = "□" * row[f'js{s}']
+            
+    return stars
+
+def determineSkillsDisplayVacancy(row, s, values):
+    stars = ''
+    isRequired = values[s] > 0
+    hasSkill = row[s] > 0
+    if isRequired: 
+        diff = row[s] - values[s]
+        if diff == 0:
+            stars = "☑" * row[s]
+        if diff < 0:
+            have = "☑" * row[s]
+            missing = "☒" * abs(diff)
+            stars = have + missing
+        if diff > 0:
+            have = "☑" * row[s]
+            extra = "★" * diff
+            stars = have + extra
+
+    else:
+        if not hasSkill:
+            stars = "☒" * values[s]
+        else:
+            stars = "★" * row[s]
+            
+    return stars
+
+def setSkillsDisplay(allskills, Vacancy=False, values={}):
+    if Vacancy:
+        for s in allskills:
+            df[f'dsply{s}'] = df.apply (lambda row: determineSkillsDisplayVacancy(row, s, values), axis=1)
+    else:
+        for s in allskills:
+            df[f'dsply{s}'] = df.apply (lambda row: determineSkillsDisplay(row, s), axis=1)
+
+
+    
 
 def determineGaps(row):
     gap = 0
-    skills = [1, 2, 3, 4, 5, 6, 7, 8]
-    for num in skills:
-        if row[f'SKILL {num}'] == 1:
-            if row[f'jobskill{num}'] == 1:
-                gap = gap + 0
+    surplus = 0
+    skills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
+    for s in skills:
+        if row[s] >= 1:
+            if row[f'js{s}'] >= 1:
+                gap = row[s] - row[f'js{s}']
             else:
-                gap = gap + 1
+                surplus = surplus + row[s]
         else:
-            if row[f'jobskill{num}'] == 1:
-                gap = gap - 1
-            else:
-                gap = gap + 0
+            if row[f'js{s}'] >= 1:
+                gap = gap - row[f'js{s}']
+        if gap > 0:
+            gap = gap + surplus
     return gap
 
-def determineGapsVacancy(row, s=[1,1,1,1,1,1,1,1,1]):
+def determineGapsVacancy(row, values):
     gap = 0
-    skills = [1, 2, 3, 4, 5, 6, 7, 8]
-    for num in skills:
-        if row[f'SKILL {num}'] == 1:
-            if s[num] == 1:
-                gap = gap + 0
+    surplus = 0
+    skills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
+    for s in skills:
+        if row[s] >= 1:
+            if values[s] >= 1:
+                gap = row[s] - values[s]
             else:
-                gap = gap + 1
+                surplus = surplus + row[s]
         else:
-            if s[num] == 1:
-                gap = gap - 1
-            else:
-                gap = gap + 0
+            if values[s] >= 1:
+                gap = gap - values[s]
+        if gap > 0:
+            gap = gap + surplus
     return gap
+
 
 def determineGapColor(row):
     color=""
@@ -107,13 +154,13 @@ def determineOutcomeColor(row):
     color=""
     if row['outcomespercentage'] >= 95:
         color='#56ad63'
-    if row['outcomespercentage'] > 90:
+    elif row['outcomespercentage'] > 90:
         color='#87cd92'
-    if row['outcomespercentage'] > 80:
+    elif row['outcomespercentage'] > 80:
         color='#b3e0ba'
-    if row['outcomespercentage'] > 70:
+    elif row['outcomespercentage'] > 70:
         color='#d8ecbd'
-    if row['outcomespercentage'] >= 0:
+    elif row['outcomespercentage'] >= 0:
         color='#edfcef'
     return color
 
@@ -132,16 +179,18 @@ def try_expander(expander_name, sidebar=True):
 
 
 # load data
-
-df = pd.read_csv("mapdataformatted.csv", header=0, encoding='utf-8')
+allskills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
+df = pd.read_csv("mapdata2.csv", header=0, encoding='utf-8')
 df['skillsdisplay'] = df.apply (lambda row: determineStars(row), axis=1)
 df['gapscore'] = df.apply (lambda row: determineGaps(row), axis=1)
 df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+setSkillsDisplay(allskills)
+
 # edit data
 df["lastName"] = df["lastName"].str.replace('\\n', '\n', regex=False)
-df["groupname"] = df["groupname"].str.replace('\\n', ' ', regex=False)
+df["team"] = df["team"].str.replace('\\n', ' ', regex=False)
 
-df_group = pd.pivot_table(df, values='atomicnumber', index=['group','groupname'], 
+df_group = pd.pivot_table(df, values='level', index=['group','team'], 
     columns=[], aggfunc=pd.Series.nunique).reset_index()
 df["color"] = df["color"].fillna('')
 
@@ -151,30 +200,25 @@ periods += [periods_bottomrow]
 df["period"] = [periods[x-1] for x in df.period]
 
 groups = [str(x) for x in df_group.group]
-groupnames = [str(x) for x in df_group.groupname]
+teams = [str(x) for x in df_group.team]
 
 with try_expander('Filter'):
     skills = st.multiselect(
      'Skills',
-     [1, 2, 3, 4, 5, 6, 7, 8],
-     [])
-    sme = st.multiselect(
-    'SME',
-    [1, 2, 3, 4, 5, 6, 7, 8],
-    [])
+     allskills,
+     allskills)
+    skillLevel = st.slider('Skill level', 0, 4, 0)
     outcomes = st.slider('Positive outcome percentage >', 0, 100, 0)
     team = st.multiselect(
      'Team',
-     [1, 2, 3, 4],
-     [1, 2, 3, 4])
+     ["Corp", "TA", "Learning", "Immersion","Coaching"],
+     ["Corp", "TA", "Learning", "Immersion","Coaching"])
 
-    if len(sme) > 0:
-        df = df[df['SME'].isin(sme)]
     if len(team) > 0:
         df = df[df['team'].isin(team)]
     if len(skills) > 0:
-        for num in skills:
-            df = df[df[f'SKILL {num}'] == 1]
+        for s in skills:
+            df = df[df[s] >= skillLevel]
     if outcomes != 0:
         df = df[df['outcomespercentage'] > outcomes]
 
@@ -182,48 +226,59 @@ with try_expander('Find Gaps'):
     qualifications = st.selectbox(
      'Qualifications',
      ("All","Underqualified", "Qualified", "Overqualified"))
-    gaps = st.slider('Gap Score', -9, 8, -9)
     if "Underqualified" == qualifications:
         df = df[df['gapscore'] < 0]
     if "Qualified" == qualifications:
         df = df[df['gapscore'] == 0]
     if "Overqualified" == qualifications:
         df = df[df['gapscore'] > 0]
-    if gaps != -9:
-        df = df[df['gapscore'] >= gaps]
 
 
 
 # plot config options in sidebar
 with try_expander('Fill Vacancy'):
+    val1 = {"Innovation": 0, "Agility": 1,"Judgement": 0, "Influence": 0, "Collaboration": 1, "Results": 1, "Economics": 1}
+    val2 = {"Innovation": 0, "Agility": 1,"Judgement": 0, "Influence": 0, "Collaboration": 1, "Results": 1, "Economics": 1}
+    val3 = {"Innovation": 1, "Agility": 1,"Judgement": 1, "Influence": 1, "Collaboration": 1, "Results": 1, "Economics": 1}
+    val4 = {"Innovation": 1, "Agility": 1,"Judgement": 1, "Influence": 1, "Collaboration": 1, "Results": 1, "Economics": 1}
+    val5 = {"Innovation": 1, "Agility": 1,"Judgement": 1, "Influence": 1, "Collaboration": 1, "Results": 1, "Economics": 1}
     vacancy = st.selectbox(
      'Vacancy',
-     ('None','T:1,R:B,L:1','T:1,R:B,L:2', 'T:2,R:B,L:2', 'T:3,R:A,L:1', 'T:3,R:B,L:1'))
-    if vacancy == 'T:1,R:B,L:1':
-        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, [0,0,1,0,0,0,0,0,0]), axis=1)
-        df['skillsdisplay'] = df.apply (lambda row: determineStarsVacancy(row, [0,0,1,0,0,0,0,0,0]), axis=1)
+     ('None','TA | Level 1','Learning | Level: 1', 'Immersion | Level: 1A', 'Immersion | Level: 1B', 'Immersion | Level: 1C'))
+    if vacancy == 'TA | Level 1':
+        setSkillsDisplay(allskills, True, val1)
+        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val1), axis=1)
         df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
-    if vacancy == 'T:1,R:B,L:2':
-        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, [0,0,1,1,0,0,0,0,0]), axis=1)
-        df['skillsdisplay'] = df.apply (lambda row: determineStarsVacancy(row, [0,0,1,1,0,0,0,0,0]), axis=1)
+    if vacancy == 'Learning | Level: 1':
+        setSkillsDisplay(allskills, True, val2)
+        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val2), axis=1)
         df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
-    if vacancy == 'T:3,R:A,L:1':
-        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, [0,1,1,1,0,0,0,0,0]), axis=1)
-        df['skillsdisplay'] = df.apply (lambda row: determineStarsVacancy(row, [0,1,1,1,0,0,0,0,0]), axis=1)
+    if vacancy == 'Immersion | Level: 1A':
+        setSkillsDisplay(allskills, True, val3)
+        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val3), axis=1)
+        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+    if vacancy == 'Immersion | Level: 1B':
+        setSkillsDisplay(allskills, True, val4)
+        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val4), axis=1)
+        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+    if vacancy == 'Immersion | Level: 1C':
+        setSkillsDisplay(allskills, True, val5)
+        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val5), axis=1)
         df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
     if vacancy == 'None':
+        setSkillsDisplay(allskills)
         df['gapscore'] = df.apply (lambda row: determineGaps(row), axis=1)
-        df['skillsdisplay'] = df.apply (lambda row: determineStars(row), axis=1)
         df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
 
 plot_title = ''
 plot_font = 'Helvetica'
 
 with try_expander('Color'):
-    color = st.selectbox('Color Gradient', ['Gap Score'], index=0)
+    color = st.selectbox('Color Gradient', ['Gap Score', 'Outcome Percentage'], index=0)
     if color == 'Outcome Percentage':
         df['color'] = df.apply (lambda row: determineOutcomeColor(row), axis=1)
-
+    if color == 'Gap Score':
+        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
 
 with try_expander('Format'):
     plot_scale = st.slider('OVERALL SCALE', min_value=50, max_value=300, value=100, step=5, format='%d%%')/100.00
@@ -238,7 +293,7 @@ with try_expander('Format'):
     title_size = str(st.slider('Title', min_value=5, max_value=72, value=title_size, step=1, format='%dpx')) + 'px'
     
     element_number_size = round(11 * plot_scale)
-    element_number_size = str(st.slider('Atomic Number', min_value=5, max_value=72, value=element_number_size, step=1, format='%dpx')) + 'px'
+    element_number_size = str(st.slider('Level', min_value=5, max_value=72, value=element_number_size, step=1, format='%dpx')) + 'px'
     
     element_firstName_size = 17
     element_firstName_size = str(st.slider('firstName', min_value=5, max_value=72, value=element_firstName_size, step=1, format='%dpx')) + 'px'
@@ -260,7 +315,7 @@ with try_expander('Format'):
     element_color = st.selectbox('Element Color', ['From datafile','Category20','Category20b','Category20c'], index=0)
     title_color = st.color_picker('Title color', '#3B3838')
     text_color = st.color_picker('Element Text color', '#3B3838')
-    groupname_color = st.color_picker('Groupname color', '#757171')
+    team_color = st.color_picker('team color', '#757171')
     trademark_color = st.color_picker('Trademark color', '#757171')
 
     if element_color.startswith('Category20'):
@@ -274,19 +329,34 @@ with try_expander('Format'):
 
 # define figure
 TOOLTIPS = """
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <div style="width:300px; padding:10px;background-color: white;">
         <div>
             <span style="font-size: 30px; font-weight: bold;">@firstName @lastName</span>
         </div>
         <div>
-            <span style="font-size: 14px; font-weight: bold; ">@groupname Level: @level</span>
+            <span style="font-size: 14px; font-weight: bold; ">@team level: @level</span>
+        </div>
+                <div>
+            <span style="font-size: 14px; font-weight: bold; ">Gap Score: @gapscore</span>
         </div>
         <br>
         <div>
             <span style="font-size: 20px; font-weight: bold; margin-bottom:20px">Outcome: @Outcomes Scope: @Scope Outcomes Success: @outcomespercentage %</span>
         </div>
+        <div>
+            <span style="font-size: 20px; font-weight: bold; margin-bottom:20px">
+            Innovation @Innovation/@jsInnovation : @dsplyInnovation <br>
+            Agility @Agility/@jsAgility : @dsplyAgility <br>
+            Judgement @Judgement/@jsJudgement : @dsplyJudgement  <br>
+            Influence @Influence/@jsInfluence : @dsplyInfluence <br>
+            Collaboration @Collaboration/@jsCollaboration : @dsplyCollaboration <br>
+            Results @Results/@jsResults : @dsplyResults <br>
+            Economics @Economics/@jsEconomics : @dsplyEconomics  <br>
+            </span>
+        </div>
         <br>
-        @skillsdisplay
         <div>
         </div>
 """
@@ -312,44 +382,45 @@ text_props = {"source": df, "text_baseline":"middle", "text_color":text_color}
 # print number
 p.text(x=dodge("group", -0.4, range=p.x_range), 
     y=dodge("period", 0.3, range=p.y_range),
-    text="atomicnumber",
+    text="level",
     text_align="left",
     text_font=value(plot_font),
     text_font_style="italic",
     text_font_size=element_number_size,
     **text_props)
 
-p.text(x=dodge("group", -0.4, range=p.x_range), 
-    y=dodge("period", 0.3, range=p.y_range),
-    text='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="600" height="600" fill="white">
+# p.text(x=dodge("group", -0.4, range=p.x_range), 
+#     y=dodge("period", 0.3, range=p.y_range),
+#     text='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="600" height="600" fill="white">
 
-  <title>Abstract user icon</title>
+#   <title>Abstract user icon</title>
 
-  <defs>
-    <clipPath id="circular-border">
-      <circle cx="300" cy="300" r="280"/>
-    </clipPath>
-    <clipPath id="avoid-antialiasing-bugs">
-	  <rect width="100%" height="498"/>
-    </clipPath>
-  </defs>
+#   <defs>
+#     <clipPath id="circular-border">
+#       <circle cx="300" cy="300" r="280"/>
+#     </clipPath>
+#     <clipPath id="avoid-antialiasing-bugs">
+# 	  <rect width="100%" height="498"/>
+#     </clipPath>
+#   </defs>
   
-  <circle cx="300" cy="300" r="280" fill="black" clip-path="url(#avoid-antialiasing-bugs)"/>
-  <circle cx="300" cy="230" r="115"/>
-  <circle cx="300" cy="550" r="205" clip-path="url(#circular-border)"/>
-</svg>''',
-    text_align="left",
-    text_font=value(plot_font),
-    text_font_style="italic",
-    text_font_size=element_number_size,
-    **text_props)
+#   <circle cx="300" cy="300" r="280" fill="black" clip-path="url(#avoid-antialiasing-bugs)"/>
+#   <circle cx="300" cy="230" r="115"/>
+#   <circle cx="300" cy="550" r="205" clip-path="url(#circular-border)"/>
+# </svg>''',
+#     text_align="left",
+#     text_font=value(plot_font),
+#     text_font_style="italic",
+#     text_font_size=element_number_size,
+#     **text_props)
 
 
 # print firstName
-p.text(x=dodge("group", -0.2, range=p.x_range),
+p.text(x=dodge("group", 0, range=p.x_range),
     y=dodge("period", 0.1, range=p.y_range),
     text="firstName",
     text_font=value(plot_font),
+    text_align="center",
     text_font_style="bold",
     text_font_size=element_firstName_size,
     **text_props)
@@ -375,16 +446,16 @@ p.add_layout(Title(text=plot_title,
     text_font_size=title_size
     ), "above")
 
-# print groupnames on x-axis
+# print teams on x-axis
 p.text(x=groups,
     y=[periods_bottomrow for x in groups],
-    text=[x.replace(u' ', u'\n') for x in groupnames],
+    text=[x.replace(u' ', u'\n') for x in teams],
     text_align="center", 
     text_line_height=text_line_height,
     text_baseline="middle",
     text_font=value(plot_font),
     text_font_size=group_name_size,
-    text_color=groupname_color
+    text_color=team_color
     )
 
 
@@ -398,8 +469,8 @@ p.hover.renderers = [r] # only hover element boxes
 
 # Set autohide to true to only show the toolbar when mouse is over plot
 p.toolbar.autohide = True
-
 st.header('Team Members: ')
+st.text('  ')
 
 st.bokeh_chart(p)
 
