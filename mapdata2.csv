@@ -1,0 +1,40 @@
+﻿team,role,group,period,level,Outcomes,Scope,jsInnovation,jsAgility,jsJudgement,jsInfluence,jsCollaboration,jsResults,jsEconomics,firstName,lastName,Innovation,Agility,Judgement,Influence,Collaboration,Results,Economics,gapscore,color,outcomespercentage
+Corp,VP Talent,1,1,4,ipsum lorem,Tellus cras,4,3,3,4,4,4,4,Diego,Estes,4,2,3,4,4,4,4,-1,#56ad63,57
+TA,Director,2,1,3,ipsum lorem,Tellus cras,3,3,3,4,4,3,4,Antoine,Jarvis,1,3,3,4,4,3,4,-2,#56ad64,86
+TA,TA Mgr,2,2,3,ipsum lorem,Tellus cras,1,1,2,2,2,2,2,Anika,Hayden,1,1,2,2,3,2,2,1,#56ad65,72
+TA,TA Mgr,2,3,3,ipsum lorem,Tellus cras,1,1,2,2,2,2,2,Antony,Lucas,1,1,2,2,2,2,2,0,#56ad66,95
+TA,TA Advisor,2,4,2,ipsum lorem,Tellus cras,1,1,1,2,2,2,1,Armando,Rowland,1,1,1,2,3,2,1,1,#56ad67,90
+TA,TA Advisor,2,5,2,ipsum lorem,Tellus cras,1,1,1,2,2,2,1,Jace,Gay,1,1,1,2,2,2,1,0,#56ad68,93
+TA,TA Spec,2,6,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,VACANT,,0,0,0,0,0,0,0,-4,#56ad69,
+TA,TA Mobility Spec,2,7,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Maci,Little,0,1,0,0,1,1,1,0,#56ad70,80
+Learning,Director,3,1,3,ipsum lorem,Tellus cras,3,3,3,4,4,3,4,Eileen,Vance,2,4,3,3,4,3,2,-3,#56ad71,50
+Learning,Manager,3,2,2,ipsum lorem,Tellus cras,1,1,2,2,2,2,2,Sergio,Rhodes,1,1,1,2,2,2,4,1,#56ad72,75
+Learning,Inst Design,3,3,1,ipsum lorem,Tellus cras,1,1,2,2,2,2,2,Jaime,Craig,0,1,1,2,2,2,4,0,#56ad73,60
+Learning,Exp Designer,3,4,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Johanna,Carson,0,1,0,0,1,1,1,0,#56ad74,85
+Learning,Exp Designer,3,5,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Jacquelyn,Wall,0,1,0,0,1,1,1,0,#56ad75,66
+Learning,Digital Content Spec,3,6,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Slade,Arroyo,0,1,0,0,1,1,1,0,#56ad76,95
+Learning,Digital Content Spec,3,7,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,VACANT,,0,0,0,0,0,0,0,-4,#56ad77,
+Learning,Digital Content Spec,3,8,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Kamren,Mccoy,0,2,0,0,2,1,1,2,#56ad78,87
+Learning,Digital Content Spec,3,9,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Briley,Escobar,0,0,0,0,1,0,1,-2,#56ad79,96
+Learning,Tech Training Mgr,3,10,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Jazlene,Farrell,0,1,0,0,1,1,1,0,#56ad80,64
+Learning,Tech Training Mgr,3,11,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Miguel,Glover,0,2,1,1,2,1,1,4,#56ad81,71
+Learning,Tech Training Mgr,3,12,1,ipsum lorem,Tellus cras,0,1,0,0,1,1,1,Nina,Anderson,0,1,0,0,1,1,1,0,#56ad82,74
+Immersion,Manager,4,1,2,ipsum lorem,Tellus cras,2,2,3,3,2,2,3,Coleman,Meyers,2,3,3,3,2,2,3,1,#56ad83,90
+Immersion,Program Assoc,4,2,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,Jairo,Salinas,0,1,1,1,1,1,1,0,#56ad84,80
+Immersion,Program Assoc,4,3,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,Zavier,Colon,0,1,1,1,1,1,1,0,#56ad85,66
+Immersion,Program Assoc,4,4,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,Mireya,Morrison,0,1,1,0,1,1,1,-1,#56ad86,97
+Immersion,Program Assoc,4,5,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,Kenyon,Collier,0,1,1,1,1,1,1,0,#56ad87,95
+Immersion,Program Assoc,4,6,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,Brynn,Pierce,1,1,1,1,1,1,1,1,#56ad88,79
+Immersion,Program Assoc,4,7,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,VACANT,,0,0,0,0,0,0,0,-6,#56ad89,
+Immersion,Program Assoc,4,8,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,VACANT,,0,0,0,0,0,0,0,-6,#56ad90,
+Immersion,Program Assoc,4,9,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,VACANT,,0,0,0,0,0,0,0,-6,#56ad91,
+Immersion,Program Assoc,4,10,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,Annabelle,Casey,0,1,1,1,2,2,2,3,#56ad92,61
+Immersion,Program Assoc,4,11,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,Gaven,Harrison,0,1,1,1,1,2,3,3,#56ad93,63
+Immersion,Program Assoc,4,12,1,ipsum lorem,Tellus cras,0,1,1,1,1,1,1,Allyson,Meza,0,1,1,1,1,1,1,0,#56ad94,56
+Coaching,Director,5,1,3,ipsum lorem,Tellus cras,3,3,3,3,3,3,4,Roman,Kent,3,3,3,3,3,2,4,-1,#56ad95,59
+Coaching,Coach,5,2,2,ipsum lorem,Tellus cras,2,2,2,2,2,2,3,Shiloh,Barnes,2,2,2,2,2,2,3,0,#56ad96,72
+Coaching,Coach,5,3,2,ipsum lorem,Tellus cras,2,2,2,2,2,2,3,Sadie,Kent,2,2,1,2,2,2,3,-1,#56ad97,80
+Coaching,Coach,5,4,2,ipsum lorem,Tellus cras,2,2,2,2,2,2,3,Cooper,Peck,2,2,2,2,1,2,3,-1,#56ad98,51
+Coaching,Coach,5,5,2,ipsum lorem,Tellus cras,2,2,2,2,2,2,3,Aedan,Cantu,2,2,2,2,2,2,4,1,#56ad99,50
+Coaching,Coach,5,6,1,ipsum lorem,Tellus cras,1,2,2,2,2,2,2,Patrick,Clarke,1,2,2,2,2,2,1,-1,#56ad100,54
+Coaching,Coach,5,7,1,ipsum lorem,Tellus cras,1,2,2,2,2,2,2,Kendra,Clay,1,2,2,2,2,2,1,-1,#56ad101,54
