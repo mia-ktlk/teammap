@@ -21,8 +21,38 @@ except:
     st.beta_set_page_config(layout="wide")
 
 st.sidebar.title('Crown Castle Map')
-allskills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
+allskills = ["Innovation", "Influence", "Savvy", "Craft Skill 1", "Craft Skill 2", "Craft Skill 3", "Craft Skill 4",
+             "Craft Skill 5", "Craft Skill 6", "Craft Skill 7", "Craft Skill 8", "Craft Skill 9", "Craft Skill 10",
+             "Craft Skill 11", "Craft Skill 12", "Craft Skill 13", "Craft Skill 14", "Craft Skill 15", "Craft Skill 16",
+             "Craft Skill 17", "Craft Skill 18", "Craft Skill 19", "Craft Skill 20", "Craft Skill 21", "Craft Skill 22",
+             "Craft Skill 23", "Craft Skill 24", "Craft Skill 25", "Craft Skill 26", "Craft Skill 27", "Craft Skill 28",
+             "Craft Skill 29", "Craft Skill 30", "Craft Skill 31", "Craft Skill 32", "Craft Skill 33", "Craft Skill 34",
+             "Craft Skill 35", "Craft Skill 36", "Craft Skill 37", "Craft Skill 38", "Craft Skill 39", "Craft Skill 40"]
 
+position_attr = ["Unit","Group","Team","Role","Level","Period","Outcomes",]
+for s in allskills:
+    position_attr.append(f'js{s}')
+
+
+def determineGroup(unit):
+    if unit == "Talent":
+        return 1
+    elif unit == "Corp":
+        return 2
+    elif unit == "Engineering":
+        return 3
+    elif unit == "Sales":
+        return 4
+    elif unit == "Marketing":
+        return 5
+    elif unit == "Manufacturing":
+        return 6
+
+def determinePeriod(unit):
+    ind = dups_units[dups_units['Unit'] == unit].index
+    per = int(dups_units.loc[ind, 'count'].values)
+    dups_units.loc[ind, 'count'] = per -1
+    return per
 
 def determineStars(row):
     stars = '<div class="rating">'
@@ -63,7 +93,7 @@ def determineSkillsDisplay(row, s):
         else:
             stars = "★" * row[s]
 
-    if row['firstName'] == "VACANT":
+    if row['Name'] == "VACANT":
         stars = "□" * row[f'js{s}']
 
     return stars
@@ -96,8 +126,9 @@ def determineSkillsDisplayVacancy(row, s, values):
 
 
 def setSkillsDisplay(allskills, Vacancy=False, values={}):
+    display_skills = ["Innovation","Influence","Savvy"]
     if Vacancy:
-        for s in allskills:
+        for s in display_skills:
             df[f'dsply{s}'] = df.apply(lambda row: determineSkillsDisplayVacancy(row, s, values), axis=1)
     else:
         for s in allskills:
@@ -124,8 +155,7 @@ def determineGaps(row):
 def determineGapsVacancy(row, values):
     gap = 0
     surplus = 0
-    skills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
-    for s in skills:
+    for s in allskills:
         if row[s] >= 1:
             if values[s] >= 1:
                 gap = row[s] - values[s]
@@ -152,15 +182,15 @@ def determineGapColor(row):
 
 def determineOutcomeColor(row):
     color = ""
-    if row['outcomespercentage'] >= 95:
+    if row['OutcomePercent'] >= 95:
         color = '#56ad63'
-    elif row['outcomespercentage'] > 90:
+    elif row['OutcomesPercent'] > 90:
         color = '#87cd92'
-    elif row['outcomespercentage'] > 80:
+    elif row['OutcomePercent'] > 80:
         color = '#b3e0ba'
-    elif row['outcomespercentage'] > 70:
+    elif row['OutcomePercent'] > 70:
         color = '#d8ecbd'
-    elif row['outcomespercentage'] >= 0:
+    elif row['OutcomePercent'] >= 0:
         color = '#edfcef'
     return color
 
@@ -178,14 +208,30 @@ def try_expander(expander_name, sidebar=True):
             return st.beta_expander(expander_name)
 
 
-# load data
+# load data (if any) from global state
 df = global_vars.global_df
 
 # See if the CSV has already been loaded once, if so prevent it from overwriting the new changes
 if global_vars.data_loaded == 0:
-    df = pd.read_csv("mapdata2.csv", header=0, encoding='utf-8')
+    df = pd.read_csv("newdata.csv", header=0, encoding='utf-8')
+    global_vars.global_df = df
     global_vars.data_loaded += 1
 
+for s in allskills:
+    df[s].replace(np.NAN, 0, inplace=True)
+df[allskills] = df[allskills].applymap(np.int64)
+
+df['Group'] = df.apply(lambda row: determineGroup(row['Unit']), axis=1)
+dups_units = df.groupby(['Unit']).size().reset_index(name='count')
+
+
+# Reverse for better functionality with determinePeriod
+df = df[::-1]
+df['Period'] = df.apply(lambda row: determinePeriod(row['Unit']), axis=1)
+#Reverse again to return to proper order
+df = df[::-1]
+
+print(df)
 # determineStars occasionally throws error 'missing positional argument 'func' but a restart usually fixes it,
 # may need to change from passing DataFrames through lambda (not sure backend reason why)
 # seems to only occur when refreshing the page without doing any position swaps?????
@@ -195,41 +241,41 @@ df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
 setSkillsDisplay(allskills)
 
 # edit data
-df["lastName"] = df["lastName"].str.replace('\\n', '\n', regex=False)
-df["team"] = df["team"].str.replace('\\n', ' ', regex=False)
+df["Name"] = df["Name"].str.replace('\\n', '\n', regex=False)
+df["Team"] = df["Team"].str.replace('\\n', ' ', regex=False)
 
-df_group = pd.pivot_table(df, values='level', index=['group', 'team'],
+df_group = pd.pivot_table(df, values='Level', index=['Unit', 'Group'],
                           columns=[], aggfunc=pd.Series.nunique).reset_index()
 df["color"] = df["color"].fillna('')
 
-df.period = pd.to_numeric(df.period)
-periods = [str(x) for x in set(df.period.values.tolist())]
-periods_bottomrow = str(len(periods) + 1)
-periods += [periods_bottomrow]
-df["period"] = [periods[x - 1] for x in df.period]
+df.Period = pd.to_numeric(df.Period)
+Periods = [str(x) for x in set(df.Period.values.tolist())]
+Periods_bottomrow = str(len(Periods) + 1)
+Periods += [Periods_bottomrow]
+df["Period"] = [Periods[x-1] for x in df.Period]
 
-groups = [str(x) for x in df_group.group]
-teams = [str(x) for x in df_group.team]
+groups = [str(x) for x in df_group.Unit]
+Group = [str(x) for x in df_group.Group]
 
 with try_expander('Filter'):
     skills = st.multiselect(
         'Skills',
         allskills,
-        allskills)
+        [])
     skillLevel = st.slider('Skill level', 0, 4, 0)
     outcomes = st.slider('Positive outcome percentage >', 0, 100, 0)
     team = st.multiselect(
         'Team',
-        ["Corp", "TA", "Learning", "Learning Con't", "Immersion", "Immersion Con't", "Coaching"],
-        ["Corp", "TA", "Learning", "Learning Con't", "Immersion", "Immersion Con't", "Coaching"])
+        ["Corp", "TA", "Talent", "Learning", "Immersion", "Coaching", "Engineering", "Sales", "Marketing", "Manufacturing"],
+        [])
 
     if len(team) > 0:
-        df = df[df['team'].isin(team)]
+        df = df[df['Team'].isin(team)]
     if len(skills) > 0:
         for s in skills:
             df = df[df[s] >= skillLevel]
     if outcomes != 0:
-        df = df[df['outcomespercentage'] > outcomes]
+        df = df[df['OutcomePercent'] > outcomes]
 
 with try_expander('Find Gaps'):
     qualifications = st.selectbox(
@@ -243,44 +289,282 @@ with try_expander('Find Gaps'):
         df = df[df['gapscore'] > 0]
 
 # plot config options in sidebar
+
 with try_expander('Fill Vacancy'):
-    corp4 = {"Innovation": 4, "Agility": 3, "Judgement": 3, "Influence": 4, "Collaboration": 4, "Results": 4,
-             "Economics": 4}
+    corp4 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
 
-    ta1 = {"Innovation": 0, "Agility": 1, "Judgement": 0, "Influence": 0, "Collaboration": 1, "Results": 1,
-           "Economics": 1}
-    ta2 = {"Innovation": 1, "Agility": 1, "Judgement": 1, "Influence": 2, "Collaboration": 2, "Results": 2,
-           "Economics": 1}
-    ta3 = {"Innovation": 3, "Agility": 3, "Judgement": 3, "Influence": 4, "Collaboration": 4, "Results": 3,
-           "Economics": 4}
+    ta1 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+    ta2 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+    ta3 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
 
-    le1 = {"Innovation": 0, "Agility": 1, "Judgement": 0, "Influence": 0, "Collaboration": 1, "Results": 1,
-           "Economics": 1}
-    le2 = {"Innovation": 1, "Agility": 1, "Judgement": 2, "Influence": 2, "Collaboration": 2, "Results": 2,
-           "Economics": 2}
-    le3 = {"Innovation": 3, "Agility": 3, "Judgement": 3, "Influence": 4, "Collaboration": 4, "Results": 3,
-           "Economics": 4}
+    le1 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+    le2 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+    le3 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
 
-    im1 = {"Innovation": 1, "Agility": 1, "Judgement": 1, "Influence": 1, "Collaboration": 1, "Results": 1,
-           "Economics": 1}
-    im2 = {"Innovation": 2, "Agility": 2, "Judgement": 3, "Influence": 3, "Collaboration": 2, "Results": 2,
-           "Economics": 3}
+    im1 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+    im2 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
 
-    co1 = {"Innovation": 1, "Agility": 2, "Judgement": 2, "Influence": 2, "Collaboration": 2, "Results": 2,
-           "Economics": 2}
-    co2 = {"Innovation": 2, "Agility": 2, "Judgement": 2, "Influence": 2, "Collaboration": 2, "Results": 2,
-           "Economics": 3}
-    co3 = {"Innovation": 3, "Agility": 3, "Judgement": 3, "Influence": 3, "Collaboration": 3, "Results": 3,
-           "Economics": 4}
+    co1 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+    co2 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+    co3 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+
+    en1 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    en2 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    en3 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+
+    mar1 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    mar2 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    mar3 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+
+    man1 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    man2 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    man3 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+
+    sa1 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    sa2 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    sa3 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+
 
     vacancy = st.selectbox(
         'Vacancy',
         ('None',
-         'Copr | Level 4',
+         'Corp | Level 4',
          'TA | Level 1', 'TA | Level 2', 'TA | Level 3',
          'Learning | Level: 1', 'Learning | Level: 2', 'Learning | Level: 3',
          'Immersion | Level: 1', 'Immersion | Level: 2',
-         'Coaching | Level: 1', 'Coaching | Level 2', 'Coaching | Level 3'))
+         'Coaching | Level: 1', 'Coaching | Level 2', 'Coaching | Level 3',
+         'Engineering | Level: 1', 'Engineering | Level 2', 'Engineering | Level 3',
+         'Marketing | Level: 1', 'Marketing | Level 2', 'Marketing | Level 3',
+         'Manufacturing | Level: 1', 'Manufacturing | Level 2', 'Manufacturing | Level 3',
+         'Sales | Level: 1', 'Sales | Level 2', 'Sales | Level 3',))
     passVal = None
     if vacancy == 'None':
         passVal = None
@@ -314,6 +598,34 @@ with try_expander('Fill Vacancy'):
     if vacancy == 'Coaching | Level: 3':
         passVal = co3
 
+    if vacancy == 'Engineering | Level: 1':
+        passVal = en1
+    if vacancy == 'Engineering | Level: 2':
+        passVal = en2
+    if vacancy == 'Engineering | Level: 3':
+        passVal = en3
+
+    if vacancy == 'Marketing | Level: 1':
+        passVal = mar1
+    if vacancy == 'Marketing | Level: 2':
+        passVal = mar2
+    if vacancy == 'Marketing | Level: 3':
+        passVal = mar3
+
+    if vacancy == 'Manufacturing | Level: 1':
+        passVal = man1
+    if vacancy == 'Manufacturing | Level: 2':
+        passVal = man2
+    if vacancy == 'Manufacturing | Level: 3':
+        passVal = man3
+
+    if vacancy == 'Sales | Level: 1':
+        passVal = sa1
+    if vacancy == 'Sales | Level: 2':
+        passVal = sa2
+    if vacancy == 'Sales | Level: 3':
+        passVal = sa3
+
     if passVal is not None:
         setSkillsDisplay(allskills, True, passVal)
         df['gapscore'] = df.apply(lambda row: determineGapsVacancy(row, passVal), axis=1)
@@ -322,64 +634,69 @@ with try_expander('Fill Vacancy'):
         df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
     df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
 
+
 with try_expander('Swap Roles'):
     # Vacant Data Frame for Firing employee
+    Employee_Cols = ["Name", "OutcomePercent"] + allskills
+    vacant_vals = ["VACANT"]
+    for s in Employee_Cols:
+        if s == "Name":
+            continue
+        vacant_vals.append(0)
     vacant = pd.DataFrame(
-        [[np.nan, "VACANT", 0, 0, 0, 0, 0, 0, 0]],
-        columns=["firstName", "lastName", "Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results",
-                 "Economics"]
+        [vacant_vals],
+        columns=Employee_Cols
     )
+    vacant_series = vacant.squeeze()
 
 
     def swap():
         e1 = st.session_state.Emp1
         e2 = st.session_state.Emp2
 
-        e1_ind = df[(df['firstName'] == e1.split(" | ")[0]) & (df['role'] == e1.split(" | ")[1])].index.values[0]
-        e2_ind = df[(df['firstName'] == e2.split(" | ")[0]) & (df['role'] == e2.split(" | ")[1])].index.values[0]
-
-
-
         if e1 == e2:
             print("Can't swap same employee")
         elif e1 == "REMOVE EMPLOYEE":
             # Remove Employee 2 by making it a vacant slot
+            e2_ind = df[(df['Name'] == e2.split(" | ")[0]) & (df['Role'] == e2.split(" | ")[1])].index.values[0]
+            print(e2_ind)
+
+            emp_2 = df.loc[e2_ind,
+                   Employee_Cols]
+            print(emp_2)
             df.loc[e2_ind,
-                   ["firstName", "lastName", "Innovation", "Agility", "Judgement", "Influence", "Collaboration",
-                    "Results", "Economics"]] = vacant
+                   Employee_Cols] = vacant_series
             global_vars.df = df
         elif e2 == "REMOVE EMPLOYEE":
             # Remove Employee 1 by making it a vacant slot
+            e1_ind = df[(df['Name'] == e1.split(" | ")[0]) & (df['Role'] == e1.split(" | ")[1])].index.values[0]
+            print(e1_ind)
+
+            emp_1 = df.loc[e1_ind,
+                           Employee_Cols]
+            print(emp_1)
+
             df.loc[e1_ind,
-                   ["firstName", "lastName", "Innovation", "Agility", "Judgement", "Influence", "Collaboration",
-                    "Results", "Economics"]] = vacant
+                   Employee_Cols] = vacant_series
             global_vars.global_df = df
         else:
             # Swap the 2 employees jobs
-
-
+            e1_ind = df[(df['Name'] == e1.split(" | ")[0]) & (df['Role'] == e1.split(" | ")[1])].index.values[0]
+            e2_ind = df[(df['Name'] == e2.split(" | ")[0]) & (df['Role'] == e2.split(" | ")[1])].index.values[0]
 
             # Query for the job info for employee 1
             e1_job = df.loc[e1_ind,
-                            ["team", "role", "group", "period", "level", "Outcomes", "Scope", "jsInnovation",
-                             "jsAgility",
-                             "jsJudgement", "jsInfluence", "jsCollaboration", "jsResults", "jsEconomics"]]
+                            position_attr]
             # Query for the job info for employee 2
             e2_job = df.loc[e2_ind,
-                            ["team", "role", "group", "period", "level", "Outcomes", "Scope", "jsInnovation",
-                             "jsAgility",
-                             "jsJudgement", "jsInfluence", "jsCollaboration", "jsResults", "jsEconomics"]]
+                            position_attr]
 
             # Query for Employee 1, and assign to employee 2's job
             df.loc[e1_ind,
-                   ["team", "role", "group", "period", "level", "Outcomes", "Scope", "jsInnovation",
-                    "jsAgility",
-                    "jsJudgement", "jsInfluence", "jsCollaboration", "jsResults", "jsEconomics"]] = e2_job
+                   position_attr] = e2_job
             # Query for Employee 2, and assign to employee 1's job
             df.loc[e2_ind,
-                   ["team", "role", "group", "period", "level", "Outcomes", "Scope", "jsInnovation",
-                    "jsAgility",
-                    "jsJudgement", "jsInfluence", "jsCollaboration", "jsResults", "jsEconomics"]] = e1_job
+                   position_attr] = e1_job
 
             # Page refreshes after swap
             # Update global copy of the DataFrame to ensure it isn't wiped
@@ -389,7 +706,7 @@ with try_expander('Swap Roles'):
     with st.form(key='my_form'):
         a = ["REMOVE EMPLOYEE"]
         for index, ro in df.iterrows():
-            a.append(str(ro['firstName']) + " | " + str(ro['role']))
+            a.append(str(ro['Name']) + " | " + str(ro['Role']))
 
         employee1 = st.selectbox(
             "Employee 1",
@@ -413,11 +730,11 @@ with try_expander('Color'):
 with try_expander('Format'):
     plot_scale = st.slider('OVERALL SCALE', min_value=50, max_value=300, value=100, step=5, format='%d%%') / 100.00
 
-    plot_width = round(len(groups) * 100 * plot_scale)
+    plot_width = round(len(groups) * 200 * plot_scale)
     plot_width = st.slider('Plot width', min_value=500, max_value=3000, value=950, step=100, format='%dpx')
 
-    plot_height = round(len(periods) * 100 * plot_scale)
-    plot_height = st.slider('Plot height', min_value=300, max_value=2000, value=940, step=20, format='%dpx')
+    plot_height = round(len(Periods) * 100 * plot_scale)
+    plot_height = st.slider('Plot height', min_value=300, max_value=2000, value=1500, step=20, format='%dpx')
 
     title_size = round(48 * plot_scale)
     title_size = str(st.slider('Title', min_value=5, max_value=72, value=title_size, step=1, format='%dpx')) + 'px'
@@ -426,17 +743,17 @@ with try_expander('Format'):
     element_number_size = str(
         st.slider('Level', min_value=5, max_value=72, value=element_number_size, step=1, format='%dpx')) + 'px'
 
-    element_firstName_size = 17
-    element_firstName_size = str(
-        st.slider('firstName', min_value=5, max_value=72, value=element_firstName_size, step=1, format='%dpx')) + 'px'
+    element_Name_size = 17
+    element_Name_size = str(
+        st.slider('Name', min_value=5, max_value=72, value=element_Name_size, step=1, format='%dpx')) + 'px'
 
-    element_name_size = round(11 * plot_scale)
-    element_name_size = str(
-        st.slider('Full name', min_value=5, max_value=72, value=element_name_size, step=1, format='%dpx')) + 'px'
+    element_role_size = round(11 * plot_scale)
+    element_role_size = str(
+        st.slider('', min_value=5, max_value=72, value=element_role_size, step=1, format='%dpx')) + 'px'
 
     group_name_size = round(12 * plot_scale)
     group_name_size = str(
-        st.slider('Group', min_value=5, max_value=72, value=group_name_size, step=1, format='%dpx')) + 'px'
+        st.slider('Unit', min_value=5, max_value=72, value=group_name_size, step=1, format='%dpx')) + 'px'
 
     trademark_size = round(12 * plot_scale)
     trademark_size = str(
@@ -458,9 +775,9 @@ with try_expander('Format'):
 
     if element_color.startswith('Category20'):
         colors = all_palettes[element_color][len(groups) + 2]
-        df["color"] = df.apply(lambda x: colors[x['group'] - 1], axis=1)
+        df["color"] = df.apply(lambda x: colors[x['Unit'] - 1], axis=1)
 
-    df["group"] = df["group"].astype(str)
+    df["Unit"] = df["Unit"].astype(str)
 
 # define figure
 TOOLTIPS = """
@@ -468,27 +785,23 @@ TOOLTIPS = """
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <div style="width:300px; padding:10px;background-color: white;">
         <div>
-            <span style="font-size: 18px; font-weight: bold;">@firstName @lastName @role</span>
+            <span style="font-size: 18px; font-weight: bold;">@Name @Role</span>
         </div>
         <div>
-            <span style="font-size: 14px; font-weight: bold; ">@team level: @level</span>
+            <span style="font-size: 14px; font-weight: bold; ">@Team Level: @Level</span>
         </div>
                 <div>
             <span style="font-size: 14px; font-weight: bold; ">Gap Score: @gapscore</span>
         </div>
         <br>
         <div>
-            <span style="font-size: 18px; font-weight: bold; margin-bottom:20px">Outcome: @Outcomes Scope: @Scope Outcomes Success: @outcomespercentage %</span>
+            <span style="font-size: 18px; font-weight: bold; margin-bottom:20px">Outcome: @Outcomes Outcomes Success: @OutcomePercent %</span>
         </div>
         <div>
             <span style="font-size: 18px; font-weight: bold; margin-bottom:20px">
             Innovation @Innovation/@jsInnovation : @dsplyInnovation <br>
-            Agility @Agility/@jsAgility : @dsplyAgility <br>
-            Judgement @Judgement/@jsJudgement : @dsplyJudgement  <br>
-            Influence @Influence/@jsInfluence : @dsplyInfluence <br>
-            Collaboration @Collaboration/@jsCollaboration : @dsplyCollaboration <br>
-            Results @Results/@jsResults : @dsplyResults <br>
-            Economics @Economics/@jsEconomics : @dsplyEconomics  <br>
+            Agility @Influence/@jsInfluence : @dsplyInfluence <br>
+            Judgement @Savvy/@jsSavvy : @dsplySavvy  <br>
             </span>
         </div>
         <br>
@@ -498,13 +811,13 @@ TOOLTIPS = """
 
 p = figure(plot_width=plot_width, plot_height=plot_height,
            x_range=groups,
-           y_range=list(reversed(periods)),
+           y_range=list(reversed(Periods)),
            tools="hover",
            toolbar_location="below",
            toolbar_sticky=False,
            tooltips=TOOLTIPS)
 
-r = p.rect("group", "period", 0.94, 0.94,
+r = p.rect("Unit", "Period", 0.94, 0.94,
            source=df,
            fill_alpha=0.7,
            color="color",
@@ -513,59 +826,33 @@ r = p.rect("group", "period", 0.94, 0.94,
 text_props = {"source": df, "text_baseline": "middle", "text_color": text_color}
 
 # print number
-p.text(x=dodge("group", -0.4, range=p.x_range),
-       y=dodge("period", 0.3, range=p.y_range),
-       text="level",
+p.text(x=dodge("Unit", -0.4, range=p.x_range),
+       y=dodge("Period", 0.3, range=p.y_range),
+       text="Level",
        text_align="left",
        text_font=value(plot_font),
        text_font_style="italic",
        text_font_size=element_number_size,
        **text_props)
 
-# p.text(x=dodge("group", -0.4, range=p.x_range), 
-#     y=dodge("period", 0.3, range=p.y_range),
-#     text='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="600" height="600" fill="white">
-
-#   <title>Abstract user icon</title>
-
-#   <defs>
-#     <clipPath id="circular-border">
-#       <circle cx="300" cy="300" r="280"/>
-#     </clipPath>
-#     <clipPath id="avoid-antialiasing-bugs">
-# 	  <rect width="100%" height="498"/>
-#     </clipPath>
-#   </defs>
-
-#   <circle cx="300" cy="300" r="280" fill="black" clip-path="url(#avoid-antialiasing-bugs)"/>
-#   <circle cx="300" cy="230" r="115"/>
-#   <circle cx="300" cy="550" r="205" clip-path="url(#circular-border)"/>
-# </svg>''',
-#     text_align="left",
-#     text_font=value(plot_font),
-#     text_font_style="italic",
-#     text_font_size=element_number_size,
-#     **text_props)
-
-
-# print firstName
-p.text(x=dodge("group", 0, range=p.x_range),
-       y=dodge("period", 0.1, range=p.y_range),
-       text="firstName",
+# print Name
+p.text(x=dodge("Unit", 0, range=p.x_range),
+       y=dodge("Period", 0.1, range=p.y_range),
+       text="Name",
        text_font=value(plot_font),
        text_align="center",
        text_font_style="bold",
-       text_font_size=element_firstName_size,
+       text_font_size=element_Name_size,
        **text_props)
 
-# print element name
-p.text(x=dodge("group", 0, range=p.x_range),
-       y=dodge("period", -0.25, range=p.y_range),
-       text="lastName",
+# print role
+p.text(x=dodge("Unit", 0, range=p.x_range),
+       y=dodge("Period", -0.25, range=p.y_range),
+       text="Role",
        text_align="center",
        text_line_height=text_line_height,
        text_font=value(plot_font),
-       text_font_size=element_name_size,
+       text_font_size=element_role_size,
        **text_props)
 
 # print title
@@ -581,8 +868,8 @@ p.add_layout(Title(text=plot_title,
 
 # print teams on x-axis
 p.text(x=groups,
-       y=[periods_bottomrow for x in groups],
-       text=[x.replace(u' ', u'\n') for x in teams],
+       y=[Periods_bottomrow for x in groups],
+       text=[x.replace(u' ', u'\n') for x in groups],
        text_align="center",
        text_line_height=text_line_height,
        text_baseline="middle",
@@ -604,12 +891,12 @@ p.toolbar.autohide = True
 st.header('Team Members: ')
 st.text('  ')
 
-st.bokeh_chart(p)
+st.bokeh_chart(p, use_container_width=True)
 
 with try_expander('Load Content', False):
     if st.checkbox('Upload your CSV', value=False):
         st.markdown(
-            'Upload your own Periodic Table CSV. Follow the example-format of "Edit CSV text" (utf-8 encoding, semicolon seperator, csv file-extension)')
+            'Upload your own Table CSV. Follow the example-format of "Edit CSV text" (utf-8 encoding, semicolon seperator, csv file-extension)')
         uploaded_file = st.file_uploader('Upload your CSV file', type=['csv'], accept_multiple_files=False)
     else:
         uploaded_file = None
