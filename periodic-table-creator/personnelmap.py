@@ -184,7 +184,7 @@ def determineOutcomeColor(row):
     color = ""
     if row['OutcomePercent'] >= 95:
         color = '#56ad63'
-    elif row['OutcomesPercent'] > 90:
+    elif row['OutcomePercent'] > 90:
         color = '#87cd92'
     elif row['OutcomePercent'] > 80:
         color = '#b3e0ba'
