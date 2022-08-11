@@ -2,17 +2,17 @@
 
 from io import StringIO
 from multiprocessing.dummy import Semaphore
+import numpy as np
 from PIL import Image
 import pandas as pd
 import streamlit as st
 from bokeh.io import output_file, show, save, export_png
 from bokeh.plotting import figure
-from bokeh.palettes import all_palettes, Turbo256 
+from bokeh.palettes import all_palettes, Turbo256
 from bokeh.transform import dodge, factor_cmap
 from bokeh.models import Title
 from bokeh.core.properties import value
-import streamlit.components.v1 as components
-
+import global_vars
 
 
 # must be called as first command
@@ -23,11 +23,12 @@ except:
 
 
 st.sidebar.title('Crown Castle Map')
+allskills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
+
 
 def determineStars(row):
     stars = '<div class="rating">'
-    skills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
-    for s in skills:
+    for s in allskills:
         if row[s] >= 1:
             if row[s] >= 1:
                 stars = stars + '<span style="color:#8E9595; font-size: 26px">★</span>'
@@ -44,7 +45,7 @@ def determineSkillsDisplay(row, s):
     stars = ''
     isRequired = row[f'js{s}'] > 0
     hasSkill = row[s] > 0
-    if isRequired: 
+    if isRequired:
         diff = row[s] - row[f'js{s}']
         if diff == 0:
             stars = "☑" * row[s]
@@ -65,14 +66,15 @@ def determineSkillsDisplay(row, s):
 
     if row['firstName'] == "VACANT":
         stars = "□" * row[f'js{s}']
-            
+
     return stars
+
 
 def determineSkillsDisplayVacancy(row, s, values):
     stars = ''
     isRequired = values[s] > 0
     hasSkill = row[s] > 0
-    if isRequired: 
+    if isRequired:
         diff = row[s] - values[s]
         if diff == 0:
             stars = "☑" * row[s]
@@ -90,8 +92,9 @@ def determineSkillsDisplayVacancy(row, s, values):
             stars = "☒" * values[s]
         else:
             stars = "★" * row[s]
-            
+
     return stars
+
 
 def setSkillsDisplay(allskills, Vacancy=False, values={}):
     if Vacancy:
@@ -102,13 +105,10 @@ def setSkillsDisplay(allskills, Vacancy=False, values={}):
             df[f'dsply{s}'] = df.apply (lambda row: determineSkillsDisplay(row, s), axis=1)
 
 
-    
-
 def determineGaps(row):
     gap = 0
     surplus = 0
-    skills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
-    for s in skills:
+    for s in allskills:
         if row[s] >= 1:
             if row[f'js{s}'] >= 1:
                 gap = row[s] - row[f'js{s}']
@@ -120,6 +120,7 @@ def determineGaps(row):
         if gap > 0:
             gap = gap + surplus
     return gap
+
 
 def determineGapsVacancy(row, values):
     gap = 0
@@ -179,21 +180,32 @@ def try_expander(expander_name, sidebar=True):
 
 
 # load data
-allskills = ["Innovation", "Agility", "Judgement", "Influence", "Collaboration", "Results", "Economics"]
-df = pd.read_csv("mapdata2.csv", header=0, encoding='utf-8')
-df['skillsdisplay'] = df.apply (lambda row: determineStars(row), axis=1)
-df['gapscore'] = df.apply (lambda row: determineGaps(row), axis=1)
-df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+df = global_vars.global_df
+
+# See if the CSV has already been loaded once, if so prevent it from overwriting the new changes
+if global_vars.data_loaded == 0:
+    df = pd.read_csv("mapdata2.csv", header=0, encoding='utf-8')
+    global_vars.data_loaded += 1
+
+# determineStars occasionally throws error 'missing positional argument 'func' but a restart usually fixes it,
+# may need to change from passing DataFrames through lambda (not sure backend reason why)
+# seems to only occur when refreshing the page without doing any position swaps?????
+print(df)
+df['skillsdisplay'] = df.apply(lambda row: determineStars(row), axis=1)
+print(df['skillsdisplay'])
+df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
+df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
 setSkillsDisplay(allskills)
 
 # edit data
 df["lastName"] = df["lastName"].str.replace('\\n', '\n', regex=False)
 df["team"] = df["team"].str.replace('\\n', ' ', regex=False)
 
-df_group = pd.pivot_table(df, values='level', index=['group','team'], 
+df_group = pd.pivot_table(df, values='level', index=['group','team'],
     columns=[], aggfunc=pd.Series.nunique).reset_index()
 df["color"] = df["color"].fillna('')
 
+df.period = pd.to_numeric(df.period)
 periods = [str(x) for x in set(df.period.values.tolist())]
 periods_bottomrow = str(len(periods)+1)
 periods += [periods_bottomrow]
@@ -234,41 +246,143 @@ with try_expander('Find Gaps'):
         df = df[df['gapscore'] > 0]
 
 
-
 # plot config options in sidebar
 with try_expander('Fill Vacancy'):
-    val1 = {"Innovation": 0, "Agility": 1,"Judgement": 0, "Influence": 0, "Collaboration": 1, "Results": 1, "Economics": 1}
-    val2 = {"Innovation": 0, "Agility": 1,"Judgement": 0, "Influence": 0, "Collaboration": 1, "Results": 1, "Economics": 1}
-    val3 = {"Innovation": 1, "Agility": 1,"Judgement": 1, "Influence": 1, "Collaboration": 1, "Results": 1, "Economics": 1}
-    val4 = {"Innovation": 1, "Agility": 1,"Judgement": 1, "Influence": 1, "Collaboration": 1, "Results": 1, "Economics": 1}
-    val5 = {"Innovation": 1, "Agility": 1,"Judgement": 1, "Influence": 1, "Collaboration": 1, "Results": 1, "Economics": 1}
+    corp4 = {"Innovation": 4, "Agility": 3,"Judgement": 3, "Influence": 4, "Collaboration": 4, "Results": 4, "Economics": 4}
+
+    ta1 = {"Innovation": 0, "Agility": 1,"Judgement": 0, "Influence": 0, "Collaboration": 1, "Results": 1, "Economics": 1}
+    ta2 = {"Innovation": 1, "Agility": 1,"Judgement": 1, "Influence": 2, "Collaboration": 2, "Results": 2, "Economics": 1}
+    ta3 = {"Innovation": 3, "Agility": 3,"Judgement": 3, "Influence": 4, "Collaboration": 4, "Results": 3, "Economics": 4}
+
+    le1 = {"Innovation": 0, "Agility": 1,"Judgement": 0, "Influence": 0, "Collaboration": 1, "Results": 1, "Economics": 1}
+    le2 = {"Innovation": 1, "Agility": 1,"Judgement": 2, "Influence": 2, "Collaboration": 2, "Results": 2, "Economics": 2}
+    le3 = {"Innovation": 3, "Agility": 3,"Judgement": 3, "Influence": 4, "Collaboration": 4, "Results": 3, "Economics": 4}
+
+    im1 = {"Innovation": 1, "Agility": 1,"Judgement": 1, "Influence": 1, "Collaboration": 1, "Results": 1, "Economics": 1}
+    im2 = {"Innovation": 2, "Agility": 2,"Judgement": 3, "Influence": 3, "Collaboration": 2, "Results": 2, "Economics": 3}
+
+    co1 = {"Innovation": 1, "Agility": 2,"Judgement": 2, "Influence": 2, "Collaboration": 2, "Results": 2, "Economics": 2}
+    co2 = {"Innovation": 2, "Agility": 2,"Judgement": 2, "Influence": 2, "Collaboration": 2, "Results": 2, "Economics": 3}
+    co3 = {"Innovation": 3, "Agility": 3,"Judgement": 3, "Influence": 3, "Collaboration": 3, "Results": 3, "Economics": 4}
+
     vacancy = st.selectbox(
      'Vacancy',
-     ('None','TA | Level 1','Learning | Level: 1', 'Immersion | Level: 1A', 'Immersion | Level: 1B', 'Immersion | Level: 1C'))
-    if vacancy == 'TA | Level 1':
-        setSkillsDisplay(allskills, True, val1)
-        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val1), axis=1)
-        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
-    if vacancy == 'Learning | Level: 1':
-        setSkillsDisplay(allskills, True, val2)
-        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val2), axis=1)
-        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
-    if vacancy == 'Immersion | Level: 1A':
-        setSkillsDisplay(allskills, True, val3)
-        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val3), axis=1)
-        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
-    if vacancy == 'Immersion | Level: 1B':
-        setSkillsDisplay(allskills, True, val4)
-        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val4), axis=1)
-        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
-    if vacancy == 'Immersion | Level: 1C':
-        setSkillsDisplay(allskills, True, val5)
-        df['gapscore'] = df.apply (lambda row: determineGapsVacancy(row, val5), axis=1)
-        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+     ('None',
+      'Copr | Level 4',
+      'TA | Level 1', 'TA | Level 2',  'TA | Level 3',
+      'Learning | Level: 1', 'Learning | Level: 2', 'Learning | Level: 3',
+      'Immersion | Level: 1', 'Immersion | Level: 2',
+      'Coaching | Level: 1', 'Coaching | Level 2', 'Coaching | Level 3'))
+    passVal = None
     if vacancy == 'None':
+        passVal = None
+
+    if vacancy == 'Corp | Level 4':
+        passVal = corp4
+
+    if vacancy == 'TA | Level 1':
+        passVal = ta1
+    if vacancy == 'TA | Level 2':
+        passVal = ta2
+    if vacancy == 'TA | Level 3':
+        passVal = ta3
+
+    if vacancy == 'Learning | Level: 1':
+        passVal = le1
+    if vacancy == 'Learning | Level: 2':
+        passVal = le2
+    if vacancy == 'Learning | Level: 3':
+        passVal = le3
+
+    if vacancy == 'Immersion | Level: 1':
+        passVal = im1
+    if vacancy == 'Immersion | Level: 2':
+        passVal = im2
+
+    if vacancy == 'Coaching | Level: 1':
+        passVal = co1
+    if vacancy == 'Coaching | Level: 2':
+        passVal = co2
+    if vacancy == 'Coaching | Level: 3':
+        passVal = co3
+
+    if passVal is not None:
+        setSkillsDisplay(allskills, True, passVal)
+        df['gapscore'] = df.apply(lambda row: determineGapsVacancy(row, passVal), axis=1)
+    else:
         setSkillsDisplay(allskills)
-        df['gapscore'] = df.apply (lambda row: determineGaps(row), axis=1)
-        df['color'] = df.apply (lambda row: determineGapColor(row), axis=1)
+        df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
+    df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
+
+
+with try_expander('Swap Roles'):
+
+    # Vacant Data Frame for Firing employee
+    vacant = pd.DataFrame(
+        [[np.nan, "VACANT", 0, 0, 0, 0, 0, 0, 0]],
+        columns=["firstName", "lastName", "Innovation","Agility","Judgement","Influence","Collaboration","Results","Economics"]
+    )
+    def swap():
+        e1 = st.session_state.Emp1
+        e2 = st.session_state.Emp2
+
+        if e1 == e2:
+            print("Can't swap same employee")
+        elif e1 == "REMOVE EMPLOYEE":
+            # Remove Employee 2 by making it a vacant slot
+            df.loc[(df['firstName'] == e2.split(" | ")[0]) & (df['role'] == e2.split(" | ")[1]),
+                           ["firstName", "lastName", "Innovation","Agility","Judgement","Influence","Collaboration","Results","Economics"]] = vacant
+            global_vars.df = df
+        elif e2 == "REMOVE EMPLOYEE":
+            # Remove Employee 1 by making it a vacant slot
+            df.loc[(df['firstName'] == e1.split(" | ")[0]) & (df['role'] == e1.split(" | ")[1]),
+                   ["firstName", "lastName", "Innovation", "Agility", "Judgement", "Influence", "Collaboration",
+                    "Results", "Economics"]] = vacant
+            global_vars.global_df = df
+        else:
+            #Swap the 2 employees jobs
+
+            # Query for the job info for employee 1
+            e1_job = df.loc[(df['firstName'] == e1.split(" | ")[0]) & (df['role'] == e1.split(" | ")[1]),
+                            ["team", "role", "group", "period", "level", "Outcomes", "Scope", "jsInnovation",
+                             "jsAgility",
+                             "jsJudgement", "jsInfluence", "jsCollaboration", "jsResults", "jsEconomics"]]
+            # Query for the job info for employee 2
+            e2_job = df.loc[(df['firstName'] == e2.split(" | ")[0]) & (df['role'] == e2.split(" | ")[1]),
+                            ["team", "role", "group", "period", "level", "Outcomes", "Scope", "jsInnovation",
+                             "jsAgility",
+                             "jsJudgement", "jsInfluence", "jsCollaboration", "jsResults", "jsEconomics"]]
+
+            # Query for Employee 1, and assign to employee 2's job
+            df.loc[(df['firstName'] == e1.split(" | ")[0]) & (df['role'] == e1.split(" | ")[1]),
+                   ["team", "role", "group", "period", "level", "Outcomes", "Scope", "jsInnovation",
+                    "jsAgility",
+                    "jsJudgement", "jsInfluence", "jsCollaboration", "jsResults", "jsEconomics"]] = e2_job.values
+            # Query for Employee 2, and assign to employee 1's job
+            df.loc[(df['firstName'] == e2.split(" | ")[0]) & (df['role'] == e2.split(" | ")[1]),
+                   ["team", "role", "group", "period", "level", "Outcomes", "Scope", "jsInnovation",
+                    "jsAgility",
+                    "jsJudgement", "jsInfluence", "jsCollaboration", "jsResults", "jsEconomics"]] = e1_job.values
+
+            # Page refreshes after swap
+            # Update global copy of the DataFrame to ensure it isn't wiped
+            global_vars.global_df = df
+
+
+    with st.form(key='my_form'):
+        a = ["REMOVE EMPLOYEE"]
+        for index, ro in df.iterrows():
+            a.append(str(ro['firstName']) + " | " + str(ro['role']))
+
+
+        employee1 = st.selectbox(
+            "Employee 1",
+            a, key='Emp1')
+
+        employee2 = st.selectbox(
+            "Employee 2",
+            a, key='Emp2')
+        st.form_submit_button(on_click=swap)
 
 plot_title = ''
 plot_font = 'Helvetica'
@@ -282,28 +396,28 @@ with try_expander('Color'):
 
 with try_expander('Format'):
     plot_scale = st.slider('OVERALL SCALE', min_value=50, max_value=300, value=100, step=5, format='%d%%')/100.00
-    
+
     plot_width = round(len(groups) * 100 * plot_scale)
     plot_width = st.slider('Plot width', min_value=500, max_value=3000, value=950, step=100, format='%dpx')
-    
+
     plot_height = round(len(periods) * 100 * plot_scale)
     plot_height = st.slider('Plot height', min_value=300, max_value=2000, value=940, step=20, format='%dpx')
 
     title_size = round(48 * plot_scale)
     title_size = str(st.slider('Title', min_value=5, max_value=72, value=title_size, step=1, format='%dpx')) + 'px'
-    
+
     element_number_size = round(11 * plot_scale)
     element_number_size = str(st.slider('Level', min_value=5, max_value=72, value=element_number_size, step=1, format='%dpx')) + 'px'
-    
+
     element_firstName_size = 17
     element_firstName_size = str(st.slider('firstName', min_value=5, max_value=72, value=element_firstName_size, step=1, format='%dpx')) + 'px'
-    
+
     element_name_size = round(11 * plot_scale)
     element_name_size = str(st.slider('Full name', min_value=5, max_value=72, value=element_name_size, step=1, format='%dpx')) + 'px'
-    
+
     group_name_size = round(12 * plot_scale)
     group_name_size = str(st.slider('Group', min_value=5, max_value=72, value=group_name_size, step=1, format='%dpx')) + 'px'
-    
+
     trademark_size = round(12 * plot_scale)
     trademark_size = str(st.slider('Trademark', min_value=5, max_value=72, value=trademark_size, step=1, format='%dpx')) + 'px'
 
@@ -371,16 +485,16 @@ p = figure(plot_width=plot_width, plot_height=plot_height,
     toolbar_sticky=False,
     tooltips=TOOLTIPS)
 
-r = p.rect("group", "period", 0.94, 0.94, 
+r = p.rect("group", "period", 0.94, 0.94,
     source=df,
-    fill_alpha=0.7, 
-    color="color", 
+    fill_alpha=0.7,
+    color="color",
     line_width=border_line_width)
 
 text_props = {"source": df, "text_baseline":"middle", "text_color":text_color}
 
 # print number
-p.text(x=dodge("group", -0.4, range=p.x_range), 
+p.text(x=dodge("group", -0.4, range=p.x_range),
     y=dodge("period", 0.3, range=p.y_range),
     text="level",
     text_align="left",
@@ -403,7 +517,7 @@ p.text(x=dodge("group", -0.4, range=p.x_range),
 # 	  <rect width="100%" height="498"/>
 #     </clipPath>
 #   </defs>
-  
+
 #   <circle cx="300" cy="300" r="280" fill="black" clip-path="url(#avoid-antialiasing-bugs)"/>
 #   <circle cx="300" cy="230" r="115"/>
 #   <circle cx="300" cy="550" r="205" clip-path="url(#circular-border)"/>
@@ -450,7 +564,7 @@ p.add_layout(Title(text=plot_title,
 p.text(x=groups,
     y=[periods_bottomrow for x in groups],
     text=[x.replace(u' ', u'\n') for x in teams],
-    text_align="center", 
+    text_align="center",
     text_line_height=text_line_height,
     text_baseline="middle",
     text_font=value(plot_font),
@@ -482,7 +596,7 @@ with try_expander('Load Content', False):
         uploaded_file = None
 
     if uploaded_file is not None:
-        bytes_data = uploaded_file.read().decode("utf-8", "strict") 
+        bytes_data = uploaded_file.read().decode("utf-8", "strict")
     else:
         try:
             with open('periodic-table-creator/periodic_nlp.csv', 'r') as f:
@@ -490,7 +604,7 @@ with try_expander('Load Content', False):
         except:
             with open('periodic_nlp.csv', 'r') as f:
                 bytes_data = f.read()
-        
+
     if st.checkbox('Edit CSV text', value=False):
         bytes_data = st.text_area('CSV file', value=bytes_data, height=200, max_chars=100000)
 
