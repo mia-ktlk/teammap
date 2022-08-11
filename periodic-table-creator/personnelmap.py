@@ -137,35 +137,37 @@ def setSkillsDisplay(allskills, Vacancy=False, values={}):
 
 def determineGaps(row):
     gap = 0
-    surplus = 0
-    for s in allskills:
-        if row[s] >= 1:
-            if row[f'js{s}'] >= 1:
-                gap = row[s] - row[f'js{s}']
-            else:
-                surplus = surplus + row[s]
+    general_skills = allskills[0:3]
+    craft_skills = allskills[3:]
+    for sk in general_skills:
+        skill_gap = row[sk] - row[f'js{sk}']
+        gap += skill_gap
+
+    for sk in craft_skills:
+        # Only check craft skills if in the job requirements
+        if row[f'js{sk}'] > 0:
+            skill_gap = row[sk] - row[f'js{sk}']
         else:
-            if row[f'js{s}'] >= 1:
-                gap = gap - row[f'js{s}']
-        if gap > 0:
-            gap = gap + surplus
+            skill_gap = 0
+        gap += skill_gap
     return gap
 
 
 def determineGapsVacancy(row, values):
     gap = 0
-    surplus = 0
-    for s in allskills:
-        if row[s] >= 1:
-            if values[s] >= 1:
-                gap = row[s] - values[s]
-            else:
-                surplus = surplus + row[s]
+    general_skills = allskills[0:3]
+    craft_skills = allskills[3:]
+    for sk in general_skills:
+        skill_gap = row[sk] - values[sk]
+        gap += skill_gap
+
+    for sk in craft_skills:
+        # Only check craft skills if in the job requirements
+        if values[sk] > 0:
+            skill_gap = row[sk] - values[sk]
         else:
-            if values[s] >= 1:
-                gap = gap - values[s]
-        if gap > 0:
-            gap = gap + surplus
+            skill_gap = 0
+        gap += skill_gap
     return gap
 
 
@@ -231,7 +233,6 @@ df['Period'] = df.apply(lambda row: determinePeriod(row['Unit']), axis=1)
 #Reverse again to return to proper order
 df = df[::-1]
 
-print(df)
 # determineStars occasionally throws error 'missing positional argument 'func' but a restart usually fixes it,
 # may need to change from passing DataFrames through lambda (not sure backend reason why)
 # seems to only occur when refreshing the page without doing any position swaps?????
@@ -291,7 +292,29 @@ with try_expander('Find Gaps'):
 # plot config options in sidebar
 
 with try_expander('Fill Vacancy'):
-    corp4 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+    corp4 = {"Innovation":3, "Influence":4, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":1, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":1, "Craft Skill 10":0,
+             "Craft Skill 11":1, "Craft Skill 12":0, "Craft Skill 13":1, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":1, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":1, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":1, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":1, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+
+    ta1 = {"Innovation":1, "Influence":1, "Savvy":1, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":1, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":1, "Craft Skill 40":0}
+    ta2 = {"Innovation":1, "Influence":2, "Savvy":2, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
+             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
+             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":1, "Craft Skill 20":0, "Craft Skill 21":1, "Craft Skill 22":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+    ta3 = {"Innovation":2, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
              "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
              "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
              "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
@@ -299,42 +322,20 @@ with try_expander('Fill Vacancy'):
              "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
              "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
 
-    ta1 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+    le1 = {"Innovation":1, "Influence":0, "Savvy":1, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
              "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
              "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
              "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
              "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
              "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
              "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
-    ta2 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+    le2 = {"Innovation":2, "Influence":1, "Savvy":2, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
              "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
              "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
              "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
-             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":1, "Craft Skill 27":0, "Craft Skill 28":0,
              "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
-             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
-    ta3 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
-             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
-             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
-             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
-             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
-             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
-             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
-
-    le1 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
-             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
-             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
-             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
-             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
-             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
-             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
-    le2 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
-             "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
-             "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
-             "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
-             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
-             "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
-             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
+             "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":1}
     le3 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
              "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
              "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
@@ -343,18 +344,18 @@ with try_expander('Fill Vacancy'):
              "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
              "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
 
-    im1 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+    im1 = {"Innovation":1, "Influence":0, "Savvy":2, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
              "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
              "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
              "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
              "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
              "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
              "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
-    im2 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
+    im2 = {"Innovation":2, "Influence":1, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
              "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
              "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
              "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
-             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":1, "Craft Skill 27":0, "Craft Skill 28":0,
              "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
              "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
 
@@ -362,7 +363,7 @@ with try_expander('Fill Vacancy'):
              "Craft Skill 5":0, "Craft Skill 6":0, "Craft Skill 7":0, "Craft Skill 8":0, "Craft Skill 9":0, "Craft Skill 10":0,
              "Craft Skill 11":0, "Craft Skill 12":0, "Craft Skill 13":0, "Craft Skill 14":0, "Craft Skill 15":0, "Craft Skill 16":0,
              "Craft Skill 17":0, "Craft Skill 18":0, "Craft Skill 19":0, "Craft Skill 20":0, "Craft Skill 21":0, "Craft Skill 22":0,
-             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":0, "Craft Skill 27":0, "Craft Skill 28":0,
+             "Craft Skill 23":0, "Craft Skill 24":0, "Craft Skill 25":0, "Craft Skill 26":1, "Craft Skill 27":0, "Craft Skill 28":0,
              "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
              "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
     co2 = {"Innovation":3, "Influence":3, "Savvy":3, "Craft Skill 1":0, "Craft Skill 2":0, "Craft Skill 3":0, "Craft Skill 4":0,
@@ -380,7 +381,7 @@ with try_expander('Fill Vacancy'):
              "Craft Skill 29":0, "Craft Skill 30":0, "Craft Skill 31":0, "Craft Skill 32":0, "Craft Skill 33":0, "Craft Skill 34":0,
              "Craft Skill 35":0, "Craft Skill 36":0, "Craft Skill 37":0, "Craft Skill 38":0, "Craft Skill 39":0, "Craft Skill 40":0}
 
-    en1 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+    en1 = {"Innovation": 2, "Influence": 0, "Savvy": 1, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
            "Craft Skill 4": 0,
            "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
            "Craft Skill 10": 0,
@@ -394,7 +395,7 @@ with try_expander('Fill Vacancy'):
            "Craft Skill 34": 0,
            "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
            "Craft Skill 40": 0}
-    en2 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+    en2 = {"Innovation": 3, "Influence": 1, "Savvy": 2, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
            "Craft Skill 4": 0,
            "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
            "Craft Skill 10": 0,
@@ -408,7 +409,93 @@ with try_expander('Fill Vacancy'):
            "Craft Skill 34": 0,
            "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
            "Craft Skill 40": 0}
-    en3 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+    en3 = {"Innovation": 4, "Influence": 2, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 1, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 1, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 1, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 1, "Craft Skill 32": 0, "Craft Skill 33": 1,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 1,
+           "Craft Skill 40": 0}
+
+    mar1 = {"Innovation": 0, "Influence": 2, "Savvy": 1, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    mar2 = {"Innovation": 1, "Influence": 3, "Savvy": 2, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 1, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    mar3 = {"Innovation": 2, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 1, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 1, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+
+    man1 = {"Innovation": 0, "Influence": 0, "Savvy": 1, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    man2 = {"Innovation": 1, "Influence": 1, "Savvy": 2, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+           "Craft Skill 4": 0,
+           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
+           "Craft Skill 10": 0,
+           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
+           "Craft Skill 16": 0,
+           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
+           "Craft Skill 22": 0,
+           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
+           "Craft Skill 28": 0,
+           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
+           "Craft Skill 34": 0,
+           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
+           "Craft Skill 40": 0}
+    man3 = {"Innovation": 2, "Influence": 2, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
            "Craft Skill 4": 0,
            "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
            "Craft Skill 10": 0,
@@ -423,7 +510,7 @@ with try_expander('Fill Vacancy'):
            "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
            "Craft Skill 40": 0}
 
-    mar1 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+    sa1 = {"Innovation": 1, "Influence": 1, "Savvy": 1, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
            "Craft Skill 4": 0,
            "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
            "Craft Skill 10": 0,
@@ -437,93 +524,7 @@ with try_expander('Fill Vacancy'):
            "Craft Skill 34": 0,
            "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
            "Craft Skill 40": 0}
-    mar2 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
-           "Craft Skill 4": 0,
-           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
-           "Craft Skill 10": 0,
-           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
-           "Craft Skill 16": 0,
-           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
-           "Craft Skill 22": 0,
-           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
-           "Craft Skill 28": 0,
-           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
-           "Craft Skill 34": 0,
-           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
-           "Craft Skill 40": 0}
-    mar3 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
-           "Craft Skill 4": 0,
-           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
-           "Craft Skill 10": 0,
-           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
-           "Craft Skill 16": 0,
-           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
-           "Craft Skill 22": 0,
-           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
-           "Craft Skill 28": 0,
-           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
-           "Craft Skill 34": 0,
-           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
-           "Craft Skill 40": 0}
-
-    man1 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
-           "Craft Skill 4": 0,
-           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
-           "Craft Skill 10": 0,
-           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
-           "Craft Skill 16": 0,
-           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
-           "Craft Skill 22": 0,
-           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
-           "Craft Skill 28": 0,
-           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
-           "Craft Skill 34": 0,
-           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
-           "Craft Skill 40": 0}
-    man2 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
-           "Craft Skill 4": 0,
-           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
-           "Craft Skill 10": 0,
-           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
-           "Craft Skill 16": 0,
-           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
-           "Craft Skill 22": 0,
-           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
-           "Craft Skill 28": 0,
-           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
-           "Craft Skill 34": 0,
-           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
-           "Craft Skill 40": 0}
-    man3 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
-           "Craft Skill 4": 0,
-           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
-           "Craft Skill 10": 0,
-           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
-           "Craft Skill 16": 0,
-           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
-           "Craft Skill 22": 0,
-           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
-           "Craft Skill 28": 0,
-           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
-           "Craft Skill 34": 0,
-           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
-           "Craft Skill 40": 0}
-
-    sa1 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
-           "Craft Skill 4": 0,
-           "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
-           "Craft Skill 10": 0,
-           "Craft Skill 11": 0, "Craft Skill 12": 0, "Craft Skill 13": 0, "Craft Skill 14": 0, "Craft Skill 15": 0,
-           "Craft Skill 16": 0,
-           "Craft Skill 17": 0, "Craft Skill 18": 0, "Craft Skill 19": 0, "Craft Skill 20": 0, "Craft Skill 21": 0,
-           "Craft Skill 22": 0,
-           "Craft Skill 23": 0, "Craft Skill 24": 0, "Craft Skill 25": 0, "Craft Skill 26": 0, "Craft Skill 27": 0,
-           "Craft Skill 28": 0,
-           "Craft Skill 29": 0, "Craft Skill 30": 0, "Craft Skill 31": 0, "Craft Skill 32": 0, "Craft Skill 33": 0,
-           "Craft Skill 34": 0,
-           "Craft Skill 35": 0, "Craft Skill 36": 0, "Craft Skill 37": 0, "Craft Skill 38": 0, "Craft Skill 39": 0,
-           "Craft Skill 40": 0}
-    sa2 = {"Innovation": 3, "Influence": 3, "Savvy": 3, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
+    sa2 = {"Innovation": 2, "Influence": 2, "Savvy": 2, "Craft Skill 1": 0, "Craft Skill 2": 0, "Craft Skill 3": 0,
            "Craft Skill 4": 0,
            "Craft Skill 5": 0, "Craft Skill 6": 0, "Craft Skill 7": 0, "Craft Skill 8": 0, "Craft Skill 9": 0,
            "Craft Skill 10": 0,
@@ -557,14 +558,14 @@ with try_expander('Fill Vacancy'):
         'Vacancy',
         ('None',
          'Corp | Level 4',
-         'TA | Level 1', 'TA | Level 2', 'TA | Level 3',
-         'Learning | Level: 1', 'Learning | Level: 2', 'Learning | Level: 3',
-         'Immersion | Level: 1', 'Immersion | Level: 2',
-         'Coaching | Level: 1', 'Coaching | Level 2', 'Coaching | Level 3',
-         'Engineering | Level: 1', 'Engineering | Level 2', 'Engineering | Level 3',
-         'Marketing | Level: 1', 'Marketing | Level 2', 'Marketing | Level 3',
-         'Manufacturing | Level: 1', 'Manufacturing | Level 2', 'Manufacturing | Level 3',
-         'Sales | Level: 1', 'Sales | Level 2', 'Sales | Level 3',))
+         'TA | Level 1',            'TA | Level 2',             'TA | Level 3',
+         'Learning | Level 1',      'Learning | Level 2',       'Learning | Level 3',
+         'Immersion | Level 1',     'Immersion | Level 2',
+         'Coaching | Level 1',      'Coaching | Level 2',       'Coaching | Level 3',
+         'Engineering | Level 1',   'Engineering | Level 2',   'Engineering | Level 3',
+         'Marketing | Level 1',     'Marketing | Level 2',      'Marketing | Level 3',
+         'Manufacturing | Level 1', 'Manufacturing | Level 2', 'Manufacturing | Level 3',
+         'Sales | Level 1',         'Sales | Level 2',          'Sales | Level 3',))
     passVal = None
     if vacancy == 'None':
         passVal = None
@@ -579,51 +580,51 @@ with try_expander('Fill Vacancy'):
     if vacancy == 'TA | Level 3':
         passVal = ta3
 
-    if vacancy == 'Learning | Level: 1':
+    if vacancy == 'Learning | Level 1':
         passVal = le1
-    if vacancy == 'Learning | Level: 2':
+    if vacancy == 'Learning | Level 2':
         passVal = le2
-    if vacancy == 'Learning | Level: 3':
+    if vacancy == 'Learning | Level 3':
         passVal = le3
 
-    if vacancy == 'Immersion | Level: 1':
+    if vacancy == 'Immersion | Level 1':
         passVal = im1
-    if vacancy == 'Immersion | Level: 2':
+    if vacancy == 'Immersion | Level 2':
         passVal = im2
 
-    if vacancy == 'Coaching | Level: 1':
+    if vacancy == 'Coaching | Level 1':
         passVal = co1
-    if vacancy == 'Coaching | Level: 2':
+    if vacancy == 'Coaching | Level 2':
         passVal = co2
-    if vacancy == 'Coaching | Level: 3':
+    if vacancy == 'Coaching | Level 3':
         passVal = co3
 
-    if vacancy == 'Engineering | Level: 1':
+    if vacancy == 'Engineering | Level 1':
         passVal = en1
-    if vacancy == 'Engineering | Level: 2':
+    if vacancy == 'Engineering | Level 2':
         passVal = en2
-    if vacancy == 'Engineering | Level: 3':
+    if vacancy == 'Engineering | Level 3':
         passVal = en3
 
-    if vacancy == 'Marketing | Level: 1':
+    if vacancy == 'Marketing | Level 1':
         passVal = mar1
-    if vacancy == 'Marketing | Level: 2':
+    if vacancy == 'Marketing | Level 2':
         passVal = mar2
-    if vacancy == 'Marketing | Level: 3':
+    if vacancy == 'Marketing | Level 3':
         passVal = mar3
 
-    if vacancy == 'Manufacturing | Level: 1':
+    if vacancy == 'Manufacturing | Level 1':
         passVal = man1
-    if vacancy == 'Manufacturing | Level: 2':
+    if vacancy == 'Manufacturing | Level 2':
         passVal = man2
-    if vacancy == 'Manufacturing | Level: 3':
+    if vacancy == 'Manufacturing | Level 3':
         passVal = man3
 
-    if vacancy == 'Sales | Level: 1':
+    if vacancy == 'Sales | Level 1':
         passVal = sa1
-    if vacancy == 'Sales | Level: 2':
+    if vacancy == 'Sales | Level 2':
         passVal = sa2
-    if vacancy == 'Sales | Level: 3':
+    if vacancy == 'Sales | Level 3':
         passVal = sa3
 
     if passVal is not None:
@@ -659,22 +660,18 @@ with try_expander('Swap Roles'):
         elif e1 == "REMOVE EMPLOYEE":
             # Remove Employee 2 by making it a vacant slot
             e2_ind = df[(df['Name'] == e2.split(" | ")[0]) & (df['Role'] == e2.split(" | ")[1])].index.values[0]
-            print(e2_ind)
 
             emp_2 = df.loc[e2_ind,
                    Employee_Cols]
-            print(emp_2)
             df.loc[e2_ind,
                    Employee_Cols] = vacant_series
             global_vars.df = df
         elif e2 == "REMOVE EMPLOYEE":
             # Remove Employee 1 by making it a vacant slot
             e1_ind = df[(df['Name'] == e1.split(" | ")[0]) & (df['Role'] == e1.split(" | ")[1])].index.values[0]
-            print(e1_ind)
 
             emp_1 = df.loc[e1_ind,
                            Employee_Cols]
-            print(emp_1)
 
             df.loc[e1_ind,
                    Employee_Cols] = vacant_series
@@ -690,14 +687,12 @@ with try_expander('Swap Roles'):
             # Query for the job info for employee 2
             e2_job = df.loc[e2_ind,
                             position_attr]
-
             # Query for Employee 1, and assign to employee 2's job
             df.loc[e1_ind,
                    position_attr] = e2_job
             # Query for Employee 2, and assign to employee 1's job
             df.loc[e2_ind,
                    position_attr] = e1_job
-
             # Page refreshes after swap
             # Update global copy of the DataFrame to ensure it isn't wiped
             global_vars.global_df = df
