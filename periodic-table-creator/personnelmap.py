@@ -29,7 +29,7 @@ allskills = ["Innovation", "Influence", "Savvy", "Craft Skill 1", "Craft Skill 2
              "Craft Skill 29", "Craft Skill 30", "Craft Skill 31", "Craft Skill 32", "Craft Skill 33", "Craft Skill 34",
              "Craft Skill 35", "Craft Skill 36", "Craft Skill 37", "Craft Skill 38", "Craft Skill 39", "Craft Skill 40"]
 display_skills = ["Innovation", "Influence", "Savvy", "CraftCount"]
-
+admin = True
 position_attr = ["Unit","Group","Team","Role","Level","Period","Outcomes",'jsCraftCount']
 for s in allskills:
     position_attr.append(f'js{s}')
@@ -205,28 +205,34 @@ def determineGapsVacancy(row, values):
 
 
 def determineGapColor(row):
-    color = ""
-    if row['gapscore'] > 0:
-        color = '#4da3f7'
-    if row['gapscore'] == 0:
-        color = '#92c6f7'
-    if row['gapscore'] < 0:
-        color = '#d6ebff'
+    if admin:
+        color = ""
+        if row['gapscore'] > 0:
+            color = '#4da3f7'
+        if row['gapscore'] == 0:
+            color = '#92c6f7'
+        if row['gapscore'] < 0:
+            color = '#d6ebff'
+    else:
+        color = '#ccdaff'
     return color
 
 
 def determineOutcomeColor(row):
     color = ""
-    if row['OutcomePercent'] >= 95:
-        color = '#56ad63'
-    elif row['OutcomePercent'] > 90:
-        color = '#87cd92'
-    elif row['OutcomePercent'] > 80:
-        color = '#b3e0ba'
-    elif row['OutcomePercent'] > 70:
-        color = '#d8ecbd'
-    elif row['OutcomePercent'] >= 0:
-        color = '#edfcef'
+    if admin:
+        if row['OutcomePercent'] >= 95:
+            color = '#56ad63'
+        elif row['OutcomePercent'] > 90:
+            color = '#87cd92'
+        elif row['OutcomePercent'] > 80:
+            color = '#b3e0ba'
+        elif row['OutcomePercent'] > 70:
+            color = '#d8ecbd'
+        elif row['OutcomePercent'] >= 0:
+            color = '#edfcef'
+    else:
+        color = '#ccdaff'
     return color
 
 
@@ -305,7 +311,7 @@ with try_expander('Filter'):
         'Team',
         ["Corp", "TA", "Talent", "Learning", "Immersion", "Coaching", "Engineering", "Sales", "Marketing", "Manufacturing"],
         [])
-
+    view_mode = st.radio('View Mode',('admin', 'employee'))
     if len(team) > 0:
         try:
             df = df[df['Team'].isin(team)]
@@ -322,152 +328,157 @@ with try_expander('Filter'):
             df = df[df['OutcomePercent'] > outcomes]
         except:
             print("Outcome Filter Failed to Set, may be no data points with set filters")
-
-with try_expander('Find Gaps'):
-    qualifications = st.selectbox(
-        'Qualifications',
-        ("All", "Underqualified", "Qualified", "Overqualified"))
-    if "Underqualified" == qualifications:
-        df = df[df['gapscore'] < 0]
-    if "Qualified" == qualifications:
-        df = df[df['gapscore'] == 0]
-    if "Overqualified" == qualifications:
-        df = df[df['gapscore'] > 0]
-
-# plot config options in sidebar
-
-
-
-
-with try_expander('Fill Vacancy'):
-
-    vacancy_dict= {
-        "None": None
-    }
-    # Look up all Vacancies and gather as new DataFram
-    vacancies = df.loc[df['Name'] == "VACANT", position_attr]
-
-    # Iterate over the rows of new DF
-    for index, row in vacancies.iterrows():
-        # Make the key for Vacancy Dict the Team + Level + Role (ex: 'Learning | Level 2 - Designer')
-        key = str(row['Team']) + " | Level" + str(row['Level']) + " - " + str(row['Role'])
-
-        # For the score report for the row and insert in Dict
-        result = row['jsInnovation': "jsCraft Skill 40"].to_dict()
-        result['jsCraftCount'] = row['jsCraftCount']
-        vacancy_dict[key] = result
-
-    vacancy = st.selectbox(
-        'Vacancy',
-        vacancy_dict.keys())
-    passVal = vacancy_dict.get(vacancy)
-    if passVal is not None:
-        if df.size > 0:
-            df['gapscore'] = df.apply(lambda row: determineGapsVacancy(row, passVal), axis=1)
-            df['jsCraftCount'] = df.apply(lambda row: determineVacancyCraftCount(row, passVal), axis=1)
-            df['CraftCount'] = df.apply(lambda row: determineVacancyCraftCount(row, passVal, True), axis=1)
-        setSkillsDisplay(allskills, True, passVal)
-
+    if view_mode == 'admin':
+        admin = True
+        df['color'] = df.apply(lambda row: determineOutcomeColor(row), axis=1)
     else:
-        if df.size > 0:
-            df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
-            df['jsCraftCount'] = df.apply(lambda row: determineCraftCount(row), axis=1)
-            df['CraftCount'] = df.apply(lambda row: determineCraftCount(row, True), axis=1)
-            setSkillsDisplay(allskills)
-    if df.size > 0:
-        df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
+        admin = False
+        df['color'] = df.apply(lambda row: determineOutcomeColor(row), axis=1)
 
-
-with try_expander('Swap Roles'):
-    # Vacant Data Frame for Firing employee
-    Employee_Cols = ["Name", "OutcomePercent"] + allskills
-    vacant_vals = ["VACANT"]
-    for s in Employee_Cols:
-        if s == "Name":
-            continue
-        vacant_vals.append(0)
-    vacant = pd.DataFrame(
-        [vacant_vals],
-        columns=Employee_Cols
-    )
-    vacant_series = vacant.squeeze()
-
-
-    def swap():
-        global df
-        e1 = st.session_state.Emp1
-        e2 = st.session_state.Emp2
-
-        if df.size != global_vars.global_df.size:
-            df = global_vars.global_df
-        if e1 == e2:
-            print("Can't swap same employee")
-        elif e1 == "REMOVE EMPLOYEE":
-            # Remove Employee 2 by making it a vacant slot
-            e2_ind = df[(df['Name'] == e2.split(" | ")[0]) & (df['Role'] == e2.split(" | ")[1])].index.values[0]
-
-            emp_2 = df.loc[e2_ind,
-                   Employee_Cols]
-            df.loc[e2_ind,
-                   Employee_Cols] = vacant_series
-            global_vars.df = df
-        elif e2 == "REMOVE EMPLOYEE":
-            # Remove Employee 1 by making it a vacant slot
-            e1_ind = df[(df['Name'] == e1.split(" | ")[0]) & (df['Role'] == e1.split(" | ")[1])].index.values[0]
-
-            emp_1 = df.loc[e1_ind,
-                           Employee_Cols]
-
-            df.loc[e1_ind,
-                   Employee_Cols] = vacant_series
-            global_vars.global_df = df
-        else:
-            # Swap the 2 employees jobs
-            e1_ind = df[(df['Name'] == e1.split(" | ")[0]) & (df['Role'] == e1.split(" | ")[1])].index.values[0]
-            e2_ind = df[(df['Name'] == e2.split(" | ")[0]) & (df['Role'] == e2.split(" | ")[1])].index.values[0]
-
-            # Query for the job info for employee 1
-            e1_job = df.loc[e1_ind,
-                            position_attr]
-            # Query for the job info for employee 2
-            e2_job = df.loc[e2_ind,
-                            position_attr]
-            # Query for Employee 1, and assign to employee 2's job
-            df.loc[e1_ind,
-                   position_attr] = e2_job
-            # Query for Employee 2, and assign to employee 1's job
-            df.loc[e2_ind,
-                   position_attr] = e1_job
-            # Page refreshes after swap
-            # Update global copy of the DataFrame to ensure it isn't wiped
-            global_vars.global_df = df
-
-
-    with st.form(key='my_form'):
-        a = ["REMOVE EMPLOYEE"]
-        for index, ro in df.iterrows():
-            a.append(str(ro['Name']) + " | " + str(ro['Role']))
-
-        employee1 = st.selectbox(
-            "Employee 1",
-            a, key='Emp1')
-
-        employee2 = st.selectbox(
-            "Employee 2",
-            a, key='Emp2')
-        st.form_submit_button(on_click=swap)
 
 plot_title = ''
 plot_font = 'Helvetica'
 
-with try_expander('Color'):
-    color = st.selectbox('Color Gradient', ['Gap Score', 'Outcome Percentage'], index=0)
-    if color == 'Outcome Percentage':
-        if df.size > 0:
-            df['color'] = df.apply(lambda row: determineOutcomeColor(row), axis=1)
-    if color == 'Gap Score':
+if admin:
+    with try_expander('Find Gaps'):
+        qualifications = st.selectbox(
+            'Qualifications',
+            ("All", "Underqualified", "Qualified", "Overqualified"))
+        if "Underqualified" == qualifications:
+            df = df[df['gapscore'] < 0]
+        if "Qualified" == qualifications:
+            df = df[df['gapscore'] == 0]
+        if "Overqualified" == qualifications:
+            df = df[df['gapscore'] > 0]
+    with try_expander('Fill Vacancy'):
+
+        vacancy_dict= {
+            "None": None
+        }
+        # Look up all Vacancies and gather as new DataFram
+        vacancies = df.loc[df['Name'] == "VACANT", position_attr]
+
+        # Iterate over the rows of new DF
+        for index, row in vacancies.iterrows():
+            # Make the key for Vacancy Dict the Team + Level + Role (ex: 'Learning | Level 2 - Designer')
+            key = str(row['Team']) + " | Level" + str(row['Level']) + " - " + str(row['Role'])
+
+            # For the score report for the row and insert in Dict
+            result = row['jsInnovation': "jsCraft Skill 40"].to_dict()
+            result['jsCraftCount'] = row['jsCraftCount']
+            vacancy_dict[key] = result
+
+        vacancy = st.selectbox(
+            'Vacancy',
+            vacancy_dict.keys())
+        passVal = vacancy_dict.get(vacancy)
+        if passVal is not None:
+            if df.size > 0:
+                df['gapscore'] = df.apply(lambda row: determineGapsVacancy(row, passVal), axis=1)
+                df['jsCraftCount'] = df.apply(lambda row: determineVacancyCraftCount(row, passVal), axis=1)
+                df['CraftCount'] = df.apply(lambda row: determineVacancyCraftCount(row, passVal, True), axis=1)
+            setSkillsDisplay(allskills, True, passVal)
+
+        else:
+            if df.size > 0:
+                df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
+                df['jsCraftCount'] = df.apply(lambda row: determineCraftCount(row), axis=1)
+                df['CraftCount'] = df.apply(lambda row: determineCraftCount(row, True), axis=1)
+                setSkillsDisplay(allskills)
         if df.size > 0:
             df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
+
+
+    with try_expander('Swap Roles'):
+        # Vacant Data Frame for Firing employee
+        Employee_Cols = ["Name", "OutcomePercent"] + allskills
+        vacant_vals = ["VACANT"]
+        for s in Employee_Cols:
+            if s == "Name":
+                continue
+            vacant_vals.append(0)
+        vacant = pd.DataFrame(
+            [vacant_vals],
+            columns=Employee_Cols
+        )
+        vacant_series = vacant.squeeze()
+
+
+        def swap():
+            global df
+            e1 = st.session_state.Emp1
+            e2 = st.session_state.Emp2
+
+            if df.size != global_vars.global_df.size:
+                df = global_vars.global_df
+            if e1 == e2:
+                print("Can't swap same employee")
+            elif e1 == "REMOVE EMPLOYEE":
+                # Remove Employee 2 by making it a vacant slot
+                e2_ind = df[(df['Name'] == e2.split(" | ")[0]) & (df['Role'] == e2.split(" | ")[1])].index.values[0]
+
+                emp_2 = df.loc[e2_ind,
+                       Employee_Cols]
+                df.loc[e2_ind,
+                       Employee_Cols] = vacant_series
+                global_vars.df = df
+            elif e2 == "REMOVE EMPLOYEE":
+                # Remove Employee 1 by making it a vacant slot
+                e1_ind = df[(df['Name'] == e1.split(" | ")[0]) & (df['Role'] == e1.split(" | ")[1])].index.values[0]
+
+                emp_1 = df.loc[e1_ind,
+                               Employee_Cols]
+
+                df.loc[e1_ind,
+                       Employee_Cols] = vacant_series
+                global_vars.global_df = df
+            else:
+                # Swap the 2 employees jobs
+                e1_ind = df[(df['Name'] == e1.split(" | ")[0]) & (df['Role'] == e1.split(" | ")[1])].index.values[0]
+                e2_ind = df[(df['Name'] == e2.split(" | ")[0]) & (df['Role'] == e2.split(" | ")[1])].index.values[0]
+
+                # Query for the job info for employee 1
+                e1_job = df.loc[e1_ind,
+                                position_attr]
+                # Query for the job info for employee 2
+                e2_job = df.loc[e2_ind,
+                                position_attr]
+                # Query for Employee 1, and assign to employee 2's job
+                df.loc[e1_ind,
+                       position_attr] = e2_job
+                # Query for Employee 2, and assign to employee 1's job
+                df.loc[e2_ind,
+                       position_attr] = e1_job
+                # Page refreshes after swap
+                # Update global copy of the DataFrame to ensure it isn't wiped
+                global_vars.global_df = df
+
+
+        with st.form(key='my_form'):
+            a = ["REMOVE EMPLOYEE"]
+            for index, ro in df.iterrows():
+                a.append(str(ro['Name']) + " | " + str(ro['Role']))
+
+            employee1 = st.selectbox(
+                "Employee 1",
+                a, key='Emp1')
+
+            employee2 = st.selectbox(
+                "Employee 2",
+                a, key='Emp2')
+            st.form_submit_button(on_click=swap)
+
+
+
+
+    with try_expander('Color'):
+        color = st.selectbox('Color Gradient', ['Gap Score', 'Outcome Percentage'], index=0)
+        if color == 'Outcome Percentage':
+            if df.size > 0:
+                df['color'] = df.apply(lambda row: determineOutcomeColor(row), axis=1)
+        if color == 'Gap Score':
+            if df.size > 0:
+                df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
 
 with try_expander('Format'):
     plot_scale = st.slider('OVERALL SCALE', min_value=50, max_value=300, value=100, step=5, format='%d%%') / 100.00
@@ -485,7 +496,7 @@ with try_expander('Format'):
     element_number_size = str(
         st.slider('Level', min_value=5, max_value=72, value=element_number_size, step=1, format='%dpx')) + 'px'
 
-    element_Name_size = 17
+    element_Name_size = 13
     element_Name_size = str(
         st.slider('Name', min_value=5, max_value=72, value=element_Name_size, step=1, format='%dpx')) + 'px'
 
@@ -552,14 +563,18 @@ TOOLTIPS = """
         <div>
         </div>
 """
-
-p = figure(plot_width=plot_width, plot_height=plot_height,
-           x_range=groups,
-           y_range=list(reversed(Periods)),
-           tools="hover",
-           toolbar_location="below",
-           toolbar_sticky=False,
-           tooltips=TOOLTIPS)
+if admin:
+    p = figure(plot_width=plot_width, plot_height=plot_height,
+               x_range=groups,
+               y_range=list(reversed(Periods)),
+               tools="hover",
+               toolbar_location="below",
+               toolbar_sticky=False,
+               tooltips=TOOLTIPS)
+else:
+    p = figure(plot_width=plot_width, plot_height=plot_height,
+               x_range=groups,
+               y_range=list(reversed(Periods)))
 
 r = p.rect("Team", "Period", 0.94, 0.94,
            source=df,
