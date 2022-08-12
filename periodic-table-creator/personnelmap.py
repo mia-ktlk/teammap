@@ -246,7 +246,7 @@ df = global_vars.global_df
 
 # See if the CSV has already been loaded once, if so prevent it from overwriting the new changes
 if global_vars.data_loaded == 0:
-    df = pd.read_csv("newdata.csv", header=0, encoding='utf-8')
+    df = pd.read_csv("https://raw.githubusercontent.com/mia-ktlk/teammap/main/periodic-table-creator/newdata.csv", header=0, encoding='utf-8')
     global_vars.global_df = df
     global_vars.data_loaded += 1
 
