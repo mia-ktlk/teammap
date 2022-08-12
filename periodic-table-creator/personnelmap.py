@@ -160,10 +160,12 @@ def determineSkillsDisplayVacancy(row, s, values):
 def setSkillsDisplay(allskills, Vacancy=False, values={}):
     if Vacancy:
         for s in display_skills:
-            df[f'dsply{s}'] = df.apply(lambda row: determineSkillsDisplayVacancy(row, s, values), axis=1)
+            if df.size > 0:
+                df[f'dsply{s}'] = df.apply(lambda row: determineSkillsDisplayVacancy(row, s, values), axis=1)
     else:
         for s in display_skills:
-            df[f'dsply{s}'] = df.apply(lambda row: determineSkillsDisplay(row, s), axis=1)
+            if df.size > 0:
+                df[f'dsply{s}'] = df.apply(lambda row: determineSkillsDisplay(row, s), axis=1)
 
 
 def determineGaps(row):
@@ -249,50 +251,49 @@ if global_vars.data_loaded == 0:
     df = pd.read_csv("https://raw.githubusercontent.com/mia-ktlk/teammap/main/periodic-table-creator/newdata.csv", header=0, encoding='utf-8')
     global_vars.global_df = df
     global_vars.data_loaded += 1
+if df.size > 0:
+    for s in allskills:
+        df[s].replace(np.NAN, 0, inplace=True)
+    df[allskills] = df[allskills].applymap(np.int64)
 
-for s in allskills:
-    df[s].replace(np.NAN, 0, inplace=True)
-df[allskills] = df[allskills].applymap(np.int64)
-
-df['Group'] = df.apply(lambda row: determineGroup(row['Unit']), axis=1)
-dups_units = df.groupby(['Unit']).size().reset_index(name='count')
+    df['Group'] = df.apply(lambda row: determineGroup(row['Unit']), axis=1)
+    dups_units = df.groupby(['Unit']).size().reset_index(name='count')
 
 
-# Reverse for better functionality with determinePeriod
-df = df[::-1]
-df['Period'] = df.apply(lambda row: determinePeriod(row['Unit']), axis=1)
-#Reverse again to return to proper order
-df = df[::-1]
+    # Reverse for better functionality with determinePeriod
+    df = df[::-1]
+    df['Period'] = df.apply(lambda row: determinePeriod(row['Unit']), axis=1)
+    #Reverse again to return to proper order
+    df = df[::-1]
+    df['jsCraftCount'] = df.apply(lambda row: determineCraftCount(row),axis=1)
+    df['CraftCount'] = df.apply(lambda row: determineCraftCount(row, True), axis=1)
 
-df['jsCraftCount'] = df.apply(lambda row: determineCraftCount(row),axis=1)
-df['CraftCount'] = df.apply(lambda row: determineCraftCount(row, True), axis=1)
+    # determineStars occasionally throws error 'missing positional argument 'func' but a restart usually fixes it,
+    # may need to change from passing DataFrames through lambda (not sure backend reason why)
+    # seems to only occur when refreshing the page without doing any position swaps?????
+    df['skillsdisplay'] = df.apply(lambda row: determineStars(row), axis=1)
+    df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
+    df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
+    setSkillsDisplay(allskills)
 
-# determineStars occasionally throws error 'missing positional argument 'func' but a restart usually fixes it,
-# may need to change from passing DataFrames through lambda (not sure backend reason why)
-# seems to only occur when refreshing the page without doing any position swaps?????
-df['skillsdisplay'] = df.apply(lambda row: determineStars(row), axis=1)
-df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
-df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
-setSkillsDisplay(allskills)
+    # edit data
+    df["Name"] = df["Name"].str.replace('\\n', '\n', regex=False)
+    df["Team"] = df["Team"].str.replace('\\n', ' ', regex=False)
 
-# edit data
-df["Name"] = df["Name"].str.replace('\\n', '\n', regex=False)
-df["Team"] = df["Team"].str.replace('\\n', ' ', regex=False)
+    df_group = pd.pivot_table(df, values='Level', index=['Unit', 'Group'],
+                              columns=[], aggfunc=pd.Series.nunique).reset_index()
+    df["color"] = df["color"].fillna('')
 
-df_group = pd.pivot_table(df, values='Level', index=['Unit', 'Group'],
-                          columns=[], aggfunc=pd.Series.nunique).reset_index()
-df["color"] = df["color"].fillna('')
+    df.Period = pd.to_numeric(df.Period)
+    Periods = [str(x) for x in set(df.Period.values.tolist())]
+    Periods_bottomrow = str(len(Periods) + 1)
+    Periods += [Periods_bottomrow]
+    df["Period"] = [Periods[x-1] for x in df.Period]
 
-df.Period = pd.to_numeric(df.Period)
-Periods = [str(x) for x in set(df.Period.values.tolist())]
-Periods_bottomrow = str(len(Periods) + 1)
-Periods += [Periods_bottomrow]
-df["Period"] = [Periods[x-1] for x in df.Period]
+    global_vars.global_df = df
 
-global_vars.global_df = df
-
-groups = [str(x) for x in df_group.Unit]
-Group = [str(x) for x in df_group.Group]
+    groups = [str(x) for x in df_group.Unit]
+    Group = [str(x) for x in df_group.Group]
 
 with try_expander('Filter'):
     skills = st.multiselect(
@@ -307,12 +308,21 @@ with try_expander('Filter'):
         [])
 
     if len(team) > 0:
-        df = df[df['Team'].isin(team)]
+        try:
+            df = df[df['Team'].isin(team)]
+        except:
+            print("Team Filter Failed to Set, may be no data points with set filters")
     if len(skills) > 0:
         for s in skills:
-            df = df[df[s] >= skillLevel]
+            try:
+                df = df[df[s] >= skillLevel]
+            except:
+                print("Skill Filter Failed to Set, may be no data points with set filters")
     if outcomes != 0:
-        df = df[df['OutcomePercent'] > outcomes]
+        try:
+            df = df[df['OutcomePercent'] > outcomes]
+        except:
+            print("Outcome Filter Failed to Set, may be no data points with set filters")
 
 with try_expander('Find Gaps'):
     qualifications = st.selectbox(
@@ -353,18 +363,20 @@ with try_expander('Fill Vacancy'):
         vacancy_dict.keys())
     passVal = vacancy_dict.get(vacancy)
     if passVal is not None:
-        df['gapscore'] = df.apply(lambda row: determineGapsVacancy(row, passVal), axis=1)
-        df['jsCraftCount'] = df.apply(lambda row: determineVacancyCraftCount(row, passVal), axis=1)
-        df['CraftCount'] = df.apply(lambda row: determineVacancyCraftCount(row, passVal, True), axis=1)
+        if df.size > 0:
+            df['gapscore'] = df.apply(lambda row: determineGapsVacancy(row, passVal), axis=1)
+            df['jsCraftCount'] = df.apply(lambda row: determineVacancyCraftCount(row, passVal), axis=1)
+            df['CraftCount'] = df.apply(lambda row: determineVacancyCraftCount(row, passVal, True), axis=1)
         setSkillsDisplay(allskills, True, passVal)
 
     else:
-        df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
-        df['jsCraftCount'] = df.apply(lambda row: determineCraftCount(row), axis=1)
-        df['CraftCount'] = df.apply(lambda row: determineCraftCount(row, True), axis=1)
-        setSkillsDisplay(allskills)
-
-    df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
+        if df.size > 0:
+            df['gapscore'] = df.apply(lambda row: determineGaps(row), axis=1)
+            df['jsCraftCount'] = df.apply(lambda row: determineCraftCount(row), axis=1)
+            df['CraftCount'] = df.apply(lambda row: determineCraftCount(row, True), axis=1)
+            setSkillsDisplay(allskills)
+    if df.size > 0:
+        df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
 
 
 with try_expander('Swap Roles'):
@@ -452,9 +464,11 @@ plot_font = 'Helvetica'
 with try_expander('Color'):
     color = st.selectbox('Color Gradient', ['Gap Score', 'Outcome Percentage'], index=0)
     if color == 'Outcome Percentage':
-        df['color'] = df.apply(lambda row: determineOutcomeColor(row), axis=1)
+        if df.size > 0:
+            df['color'] = df.apply(lambda row: determineOutcomeColor(row), axis=1)
     if color == 'Gap Score':
-        df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
+        if df.size > 0:
+            df['color'] = df.apply(lambda row: determineGapColor(row), axis=1)
 
 with try_expander('Format'):
     plot_scale = st.slider('OVERALL SCALE', min_value=50, max_value=300, value=100, step=5, format='%d%%') / 100.00
@@ -504,7 +518,8 @@ with try_expander('Format'):
 
     if element_color.startswith('Category20'):
         colors = all_palettes[element_color][len(groups) + 2]
-        df["color"] = df.apply(lambda x: colors[x['Unit'] - 1], axis=1)
+        if df.size > 0:
+            df["color"] = df.apply(lambda x: colors[x['Unit'] - 1], axis=1)
 
     df["Unit"] = df["Unit"].astype(str)
 
