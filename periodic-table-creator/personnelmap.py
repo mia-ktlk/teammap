@@ -335,10 +335,15 @@ with try_expander('Fill Vacancy'):
     vacancy_dict= {
         "None": None
     }
-
+    # Look up all Vacancies and gather as new DataFram
     vacancies = df.loc[df['Name'] == "VACANT", position_attr]
+
+    # Iterate over the rows of new DF
     for index, row in vacancies.iterrows():
-        key = str(row['Team']) + " | Level" + str(row['Level'])
+        # Make the key for Vacancy Dict the Team + Level + Role (ex: 'Learning | Level 2 - Designer')
+        key = str(row['Team']) + " | Level" + str(row['Level']) + " - " + str(row['Role'])
+
+        # For the score report for the row and insert in Dict
         result = row['jsInnovation': "jsCraft Skill 40"].to_dict()
         result['jsCraftCount'] = row['jsCraftCount']
         vacancy_dict[key] = result
