@@ -50,8 +50,8 @@ def determineGroup(unit):
         return 6
 
 
-def determinePeriod(unit):
-    ind = dups_units[dups_units['Unit'] == unit].index
+def determinePeriod(team):
+    ind = dups_units[dups_units['Team'] == team].index
     per = int(dups_units.loc[ind, 'count'].values)
     dups_units.loc[ind, 'count'] = per -1
     return per
@@ -257,12 +257,12 @@ if df.size > 0:
     df[allskills] = df[allskills].applymap(np.int64)
 
     df['Group'] = df.apply(lambda row: determineGroup(row['Unit']), axis=1)
-    dups_units = df.groupby(['Unit']).size().reset_index(name='count')
+    dups_units = df.groupby(['Team']).size().reset_index(name='count')
 
 
     # Reverse for better functionality with determinePeriod
     df = df[::-1]
-    df['Period'] = df.apply(lambda row: determinePeriod(row['Unit']), axis=1)
+    df['Period'] = df.apply(lambda row: determinePeriod(row['Team']), axis=1)
     #Reverse again to return to proper order
     df = df[::-1]
     df['jsCraftCount'] = df.apply(lambda row: determineCraftCount(row),axis=1)
@@ -280,10 +280,9 @@ if df.size > 0:
     df["Name"] = df["Name"].str.replace('\\n', '\n', regex=False)
     df["Team"] = df["Team"].str.replace('\\n', ' ', regex=False)
 
-    df_group = pd.pivot_table(df, values='Level', index=['Unit', 'Group'],
+    df_group = pd.pivot_table(df, values='Level', index=['Team'],
                               columns=[], aggfunc=pd.Series.nunique).reset_index()
     df["color"] = df["color"].fillna('')
-
     df.Period = pd.to_numeric(df.Period)
     Periods = [str(x) for x in set(df.Period.values.tolist())]
     Periods_bottomrow = str(len(Periods) + 1)
@@ -292,8 +291,8 @@ if df.size > 0:
 
     global_vars.global_df = df
 
-    groups = [str(x) for x in df_group.Unit]
-    Group = [str(x) for x in df_group.Group]
+    #groups = [str(x) for x in df_group.Unit]
+    groups = [str(x) for x in df_group.Team]
 
 with try_expander('Filter'):
     skills = st.multiselect(
@@ -562,7 +561,7 @@ p = figure(plot_width=plot_width, plot_height=plot_height,
            toolbar_sticky=False,
            tooltips=TOOLTIPS)
 
-r = p.rect("Unit", "Period", 0.94, 0.94,
+r = p.rect("Team", "Period", 0.94, 0.94,
            source=df,
            fill_alpha=0.7,
            color="color",
@@ -571,7 +570,7 @@ r = p.rect("Unit", "Period", 0.94, 0.94,
 text_props = {"source": df, "text_baseline": "middle", "text_color": text_color}
 
 # print number
-p.text(x=dodge("Unit", -0.4, range=p.x_range),
+p.text(x=dodge("Team", -0.4, range=p.x_range),
        y=dodge("Period", 0.3, range=p.y_range),
        text="Level",
        text_align="left",
@@ -581,7 +580,7 @@ p.text(x=dodge("Unit", -0.4, range=p.x_range),
        **text_props)
 
 # print Name
-p.text(x=dodge("Unit", 0, range=p.x_range),
+p.text(x=dodge("Team", 0, range=p.x_range),
        y=dodge("Period", 0.1, range=p.y_range),
        text="Name",
        text_font=value(plot_font),
@@ -591,7 +590,7 @@ p.text(x=dodge("Unit", 0, range=p.x_range),
        **text_props)
 
 # print role
-p.text(x=dodge("Unit", 0, range=p.x_range),
+p.text(x=dodge("Team", 0, range=p.x_range),
        y=dodge("Period", -0.25, range=p.y_range),
        text="Role",
        text_align="center",
