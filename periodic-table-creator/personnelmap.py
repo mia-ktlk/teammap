@@ -220,20 +220,23 @@ def determineGapColor(row):
 
 def determineOutcomeColor(row):
     color = ""
-    if admin:
-        if row['OutcomePercent'] >= 95:
-            color = '#56ad63'
-        elif row['OutcomePercent'] > 90:
-            color = '#87cd92'
-        elif row['OutcomePercent'] > 80:
-            color = '#b3e0ba'
-        elif row['OutcomePercent'] > 70:
-            color = '#d8ecbd'
-        elif row['OutcomePercent'] >= 0:
-            color = '#edfcef'
-    else:
-        color = '#ccdaff'
-    return color
+    try:
+        if admin:
+            if row['OutcomePercent'] >= 95:
+                color = '#56ad63'
+            elif row['OutcomePercent'] > 90:
+                color = '#87cd92'
+            elif row['OutcomePercent'] > 80:
+                color = '#b3e0ba'
+            elif row['OutcomePercent'] > 70:
+                color = '#d8ecbd'
+            elif row['OutcomePercent'] >= 0:
+                color = '#edfcef'
+        else:
+            color = '#ccdaff'
+        return color
+    except:
+        pass
 
 
 def try_expander(expander_name, sidebar=True):
@@ -496,7 +499,7 @@ with try_expander('Format'):
     element_number_size = str(
         st.slider('Level', min_value=5, max_value=72, value=element_number_size, step=1, format='%dpx')) + 'px'
 
-    element_Name_size = 13
+    element_Name_size = 11
     element_Name_size = str(
         st.slider('Name', min_value=5, max_value=72, value=element_Name_size, step=1, format='%dpx')) + 'px'
 
@@ -594,20 +597,20 @@ p.text(x=dodge("Team", -0.4, range=p.x_range),
        text_font_size=element_number_size,
        **text_props)
 
-# print Name
+# print role
 p.text(x=dodge("Team", 0, range=p.x_range),
        y=dodge("Period", 0.1, range=p.y_range),
-       text="Name",
+       text="Role",
        text_font=value(plot_font),
        text_align="center",
        text_font_style="bold",
        text_font_size=element_Name_size,
        **text_props)
 
-# print role
+# print team
 p.text(x=dodge("Team", 0, range=p.x_range),
        y=dodge("Period", -0.25, range=p.y_range),
-       text="Role",
+       text="Team",
        text_align="center",
        text_line_height=text_line_height,
        text_font=value(plot_font),
