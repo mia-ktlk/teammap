@@ -254,7 +254,7 @@ if global_vars.data_loaded == 0:
 if df.size > 0:
     for s in allskills:
         df[s].replace(np.NAN, 0, inplace=True)
-    df[allskills] = df[allskills].applymap(np.int64)
+    df[allskills] = df[allskills].astype(np.int64)
 
     df['Group'] = df.apply(lambda row: determineGroup(row['Unit']), axis=1)
     dups_units = df.groupby(['Unit']).size().reset_index(name='count')
